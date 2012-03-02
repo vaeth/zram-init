@@ -1,0 +1,73 @@
+#!/sbin/runscript
+
+depend() {
+	need localmount swap
+	after bootmisc modules
+}
+
+ZramInit() {
+	if [ "${fstype}" = swap ]
+	then	einfo "Swap->zram${i}"
+		/usr/sbin/zram-init -d "${i}" -p "${flag}" -- "${size}"
+	else	einfo "Mount zram${i} ${fstype}"
+		/usr/sbin/zram-init -d "${i}" -t "${flag}" -- "${size}" "${fstype}"
+	fi
+	eend ${?}
+}
+
+ZramStop() {
+	if [ "${fstype}" = swap ]
+	then	einfo "Remove zram${i} swap"
+		swapoff /dev/zram${i}
+	else	einfo "Umount zram${i} ${fstype}"
+		umount /dev/zram${i}
+	fi && printf 1 >/sys/block/zram${i}/reset
+	eend ${?}
+}
+
+ZramSanityCheck() {
+	: ${num_devices:=0}
+	[ "${num_devices}" -gt 0 ]
+}
+
+ZramIgnore() {
+	eval "fstype=\${type${i}}
+		size=\${size${i}:-0}
+		flag=\${flag${i}}"
+	case ${fstype} in
+	swap|/*)	! [ "${size}" -gt 0 ];;
+	esac
+}
+
+start() {
+	ZramSanityCheck || return 0
+
+	if yesno "${load_on_start}"
+	then	einfo "Loading zram module..."
+		modprobe zram "zram_num_devices=${num_devices}"
+		eend ${?}
+	fi
+
+	i=0
+	while [ ${i} -lt "${num_devices}" ]
+	do	ZramIgnore || ZramInit
+		i=$(( ${i} + 1 ))
+	done
+	:
+}
+
+stop() {
+	ZramSanityCheck || return 0
+
+	i=0
+	while [ ${i} -lt "${num_devices}" ]
+	do	ZramIgnore || ZramStop
+		i=$(( ${i} + 1 ))
+	done
+
+	if yesno "${unload_on_stop}" in
+	then	einfo "Unloading zram module..."
+		modprobe -r zram
+		eend ${?}
+	fi
+}

@@ -1,0 +1,14 @@
+(C) Martin Väth <martin@mvath.de>
+The license of this package is the GNU Public License GPL-2.
+
+A wrapper script for the zram linux kernel module with zsh and openrc support.
+
+This is a small helper script to setup a zram device as swap or as a ramdisk.
+Also a zsh-completion file and openrc init-scripts (used e.g. by gentoo)
+are provided.
+
+To install this script, just copy the content of sbin into root's $PATH.
+To obtain support for zsh completion, copy the content of zsh to zsh's $fpath.
+For openrc support, the content of openrc should go into /etc
+
+For Gentoo, there is an ebuild in the mv overlay (available by layman).

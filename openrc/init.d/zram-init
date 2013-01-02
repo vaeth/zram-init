@@ -44,7 +44,7 @@ start() {
 
 	if yesno "${load_on_start}"
 	then	einfo "Loading zram module..."
-		modprobe zram "zram_num_devices=${num_devices}"
+		modprobe zram "num_devices=${num_devices}"
 		eend ${?}
 	fi
 

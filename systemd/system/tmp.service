@@ -1,0 +1,12 @@
+[Unit]
+Description=/tmp with zram. Mask tmp.mount if you use this
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/zram-init -d 1 -t ext4 -o strictatime -m 1777 -- 2048 /tmp
+
+[Install]
+WantedBy=local-fs-pre.target

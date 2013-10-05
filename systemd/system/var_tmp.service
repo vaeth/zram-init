@@ -1,0 +1,12 @@
+[Unit]
+Description=/var/tmp with zram
+Conflicts=umount.target
+After=local-fs.target
+Before=umount.target display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/zram-init -d 2 -t ext4 -o relatime -m 1777 -- 2048 /var/tmp
+
+[Install]
+WantedBy=multi-user.target

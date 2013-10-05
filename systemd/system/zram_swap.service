@@ -1,0 +1,11 @@
+[Unit]
+Description=swap with zram
+DefaultDependencies=no
+Before=swap.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/zram-init -d 0 -p 16383 -- 150
+
+[Install]
+WantedBy=swap.target

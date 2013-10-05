@@ -2,8 +2,11 @@
 _arguments -s -S -A '-*' : \
 '(* -)'{'-h','-H','-\\?'}'[help]' \
 '-d+[DEV (use zram device DEV)]:device-nr:(/dev/zram*(\:t\:s/zram/))' \
-'(2 -t)-p+[PRIO (use priority PRIO for swap)]:priority for swap:(0 1 16383 -)' \
+'(2 -t -c -m -o)-p+[PRIO (use priority PRIO for swap)]:priority for swap:(0 1 16383 -)' \
 '(-p)-t+[TYPE (use filesystem TYPE)]:filesystem type:(ext2 ext3)' \
+'-c+[OWNER (chown to OWNER)]:owner\:group:(nobody\:nogroup)' \
+'-m+[MODE (chmode to MODE)]:mode:(1777 755 770)' \
+'-o+[OPTS (mount options)]:mount options:(noatime relatime strictatime)' \
 '-k[do not remove previously used zram]' \
-'1:size in megabytes:(50 100 150)' \
+'1:size in megabytes:(50 150 512 1024 2048 4096 8192)' \
 '2:directory:_files -/'

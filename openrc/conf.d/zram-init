@@ -10,10 +10,16 @@ unload_on_stop="yes"
 # It is also passed to the kernel module on modprobe.
 num_devices="1"
 
-# For each device, specify size, type, and flags:
+# For each device, specify size, type, flags, opts mode, owgr.
+# The last three can be omitted for swap but *must* be specified for others.
+# Specify as empty if unneeded.
 # size0, size1, ... are the variables for the sizes.
 # type0, type1, ... are the variables for the types.
 # flag0, flag1, ... are the variables for the flags.
+# Except for swap:
+# opts0, opts1, ... are the variables for the mount options.
+# mode0, mode1, ... are the variables for the directory umode.
+# owgr0, owgr1, ... are the variables for the directory owner:group.
 #
 # The size is in megabytes.
 # If the size is 0 (or empty) the device is ignored by the script.
@@ -28,10 +34,28 @@ num_devices="1"
 #
 # Only variables with numbers  0 ... num_devices-1  are used by the script.
 
+# swap - 150M
 type0="swap"
 flag0="16383"
 size0="150"
 
+# /tmp - 2G
+# If you use this, you should put zram-init into the boot runlevel,
+# and services usnig /tmp shoudl be in the default runlevel and/or have
+# rc_need="zram-init" in their /etc/conf.d/... file
 type1="/tmp"
 flag1="ext4"
-size1="500"
+size1="2048"
+opts1="strictatime"
+mode1="1777"
+owgr1=""
+#owgr1="nobody:nogroup"
+
+# /var/tmp - 1G
+type2="/var/tmp"
+flag2="ext2"
+size2="1024"
+opts2="relatime"
+mode2="1777"
+owgr2=""
+#owgr2="nobody:nogroup"

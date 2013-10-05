@@ -10,11 +10,7 @@ ZramInit() {
 	then	einfo "Swap->zram${i}"
 		/usr/sbin/zram-init -d "${i}" -p "${flag}" -- "${size}"
 	else	einfo "Mount zram${i} ${fstype}"
-		/usr/sbin/zram-init -d "${i}" -t "${flag}" \
-			${opts:+-o "${opts}"} \
-			${owgr:+-c "${owgr}"} \
-			${mode:+-m "${mode}"} \
-			-- "${size}" "${fstype}"
+		/usr/sbin/zram-init -d "${i}" -t "${flag}" -- "${size}" "${fstype}"
 	fi
 	eend ${?}
 }
@@ -37,10 +33,7 @@ ZramSanityCheck() {
 ZramIgnore() {
 	eval "fstype=\${type${i}}
 		size=\${size${i}:-0}
-		flag=\${flag${i}}
-		opts=\${opts${i}}
-		owgr=\${owgr${i}}
-		mode=\${mode${i}}"
+		flag=\${flag${i}}"
 	case ${fstype} in
 	swap|/*)	! [ "${size}" -gt 0 ];;
 	esac

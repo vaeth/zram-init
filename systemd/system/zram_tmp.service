@@ -6,7 +6,9 @@ Before=local-fs.target umount.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/zram-init -d 1 -t ext4 -o strictatime -m 1777 -- 2048 /tmp
+RemainAfterExit=true
+ExecStart=/usr/sbin/zram-init -d1 -text4 -ostrictatime -m1777 -- 2048 /tmp
+ExecStop=/usr/sbin/zram-init -d1 -- 0 /tmp
 
 [Install]
 WantedBy=local-fs-pre.target

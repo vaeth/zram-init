@@ -13,7 +13,7 @@ For openrc support, the content of openrc should go into /etc
 For systemd support, the content of systemd/system should go into
 /usr/lib/systemd/system or into /etc/systemd/system and be modified
 (and enabled with systemctl enable ...) for the desired setting.
-For systemd and optionally also for openrc the content of etc should go
-into /etc and be modified appropriately.
+For systemd and optionally also for openrc the content of modprobe.d should go
+into /lib/modprobe.d or /etc/modprobe.d and be modified appropriately.
 
 For Gentoo, there is an ebuild in the mv overlay (available by layman).

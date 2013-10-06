@@ -6,7 +6,9 @@ Before=umount.target display-manager.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/zram-init -d 2 -t ext4 -o relatime -m 1777 -- 2048 /var/tmp
+RemainAfterExit=true
+ExecStart=/usr/sbin/zram-init -d2 -text4 -orelatime -m1777 -- 2048 /var/tmp
+ExecStop=/usr/sbin/zram-init -d2 -- 0 /var/tmp
 
 [Install]
 WantedBy=multi-user.target

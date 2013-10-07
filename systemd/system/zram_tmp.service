@@ -1,5 +1,5 @@
 [Unit]
-Description=/tmp with zram. Mask tmp.mount if you use this
+Description=Mount /tmp as zram. Mask tmp.mount if you use this
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target
@@ -7,8 +7,14 @@ Before=local-fs.target umount.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/usr/sbin/zram-init -d1 -text4 -ostrictatime -m1777 -- 2048 /tmp
-ExecStop=/usr/sbin/zram-init -d1 -- 0 /tmp
+
+# Adapt the maximal size (in this example 2 GB) and other options to your needs.
+# Make sure to avoid collision of devices (-d...) with
+# zram_swap.service and zram_var_tmp.service and
+# that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
+
+ExecStart=/usr/sbin/zram-init -d1 -text4 -ostrictatime -m1777 2048 /tmp
+ExecStop=/usr/sbin/zram-init -d1 0 /tmp
 
 [Install]
 WantedBy=local-fs-pre.target

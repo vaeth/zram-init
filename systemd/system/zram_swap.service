@@ -6,8 +6,24 @@ Before=swap.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/usr/sbin/zram-init -d0 -- 512
-ExecStop=/usr/sbin/zram-init -d0 -- 0
+
+# Uncomment that line for Start/Stop matching the number of your processors
+# and change the maximal swap size to your needs.
+# If you use more than one processor, make sure to avoid collision of
+# devices (-d...)  with zram_tmp.service and zram_var_tmp.service and
+# that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
+
+# One processor, max. 500 MB swap totally: Use device 0
+ExecStart=/usr/sbin/zram-init 512
+ExecStop=/usr/sbin/zram-init 0
+
+# Two processors, max. 2 GB swap totally: Use devices 0,3
+#ExecStart=/usr/sbin/zram-init 1024 ; /usr/sbin/zram-init -d3 1024
+#ExecStop=/usr/sbin/zram-init 0 ; /usr/sbin/zram-init -d3 0
+
+# Four processors, max. 8 GB swap totally: Use device 0,3-5
+#ExecStart=/usr/sbin/zram-init 2048 ; /usr/sbin/zram-init -d3 2048 ; /usr/sbin/zram-init -d4 2048 ; /usr/sbin/zram-init -d5 2048
+#ExecStop=/usr/sbin/zram-init 0 ; /usr/sbin/zram-init -d3 0 ; /usr/sbin/zram-init -d4 0 ; /usr/sbin/zram-init -d5 0
 
 [Install]
 WantedBy=swap.target

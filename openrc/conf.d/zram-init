@@ -7,8 +7,8 @@ load_on_start="yes"
 unload_on_stop="yes"
 
 # Number of devices.
-# It is also passed to the kernel module on modprobe.
-num_devices="1"
+# This value is also passed to the kernel module on modprobe.
+num_devices="4"
 
 # For each device, specify size, type, flags, opts mode, owgr.
 # The last three can be omitted for swap but *must* be specified for others.
@@ -18,7 +18,7 @@ num_devices="1"
 # flag0, flag1, ... are the variables for the flags.
 # Except for swap:
 # opts0, opts1, ... are the variables for the mount options.
-# mode0, mode1, ... are the variables for the directory umode.
+# mode0, mode1, ... are the variables for the directory mode.
 # owgr0, owgr1, ... are the variables for the directory owner:group.
 #
 # The size is in megabytes.
@@ -27,7 +27,7 @@ num_devices="1"
 # Available types:
 # "swap"  The device is initialized as a swap device.
 #         The flags variable specifies the priority (16383 if empty).
-#         Use "-" in the flags variable to omit setting the priority.
+#         Use "-" in the flags variable for the default priority (-1)
 # "/..."  The device is mounted on /...
 #         The flags variable specifies the type (ext2 or ext4, default is ext4)
 # Devices with other types are ignored by the script
@@ -36,7 +36,7 @@ num_devices="1"
 
 # swap - 500M
 type0="swap"
-flag0=""
+flag0="" # The default "16383" is fine for us
 size0="512"
 
 # /tmp - 2G
@@ -46,16 +46,21 @@ size0="512"
 type1="/tmp"
 flag1="ext4"
 size1="2048"
-opts1="strictatime"
+opts1="strictatime" # e.g. "relatime" or "noatime" are also resonable choices
 mode1="1777"
-owgr1=""
-#owgr1="nobody:nogroup"
+owgr1="" # No reason to change the default "root:root"
 
 # /var/tmp - 1G
 type2="/var/tmp"
 flag2="ext2"
 size2="1024"
-opts2="relatime"
+opts2="relatime" # e.g. "noatime" or "strictatime" are also resonable choices
 mode2="1777"
-owgr2=""
-#owgr2="nobody:nogroup"
+owgr2="" # No reason to change the default "root:root"
+
+# swap - 500M
+# It is recommended to use the same number of swaps (with the same settings)
+# as you have number of processors. Be aware that their maximal size adds up...
+type3="swap"
+flag3=""
+size3="512"

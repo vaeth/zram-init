@@ -22,9 +22,10 @@ ZramInit() {
 ZramStop() {
 	if [ "${fstype}" = swap ]
 	then	einfo "Remove zram${i} swap"
+		zram-init -d "${i}" -- 0
 	else	einfo "Umount zram${i} ${fstype}"
+		zram-init -d "${i}" -- 0 "${fstype}"
 	fi
-	zram-init -d "${i}" -- 0 "${fstype}"
 	eend ${?}
 }
 

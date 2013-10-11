@@ -9,8 +9,13 @@ Echon() {
 	printf '%s' "${*}"
 }
 
-Fatal() {
+Warning() {
 	Echo "${0##*/}: ${*}" >&2
+	exit 1
+}
+
+Fatal() {
+	Warning "${*}"
 	exit 1
 }
 
@@ -60,7 +65,7 @@ shift $(( ${OPTIND} -1 ))
 [ ${#} -eq 1 ] || [ ${#} -eq 2 ] || Usage
 
 # Defaults for empty/unspecified options:
-: ${dev:=0} ${prio:=16383} ${fstype=ext4}
+: ${dev:=0} ${prio:=16383} ${fstype:=ext4}
 
 umount=:
 [ "${1:-0}" -ge 0 ] || Usage
@@ -73,8 +78,12 @@ swap=:
 if [ ${#} -eq 2 ]
 then	swap=false
 	dir=${2%/}
-	[ -n "${dir}" ] && test -d "${dir}" \
-		|| Fatal "${dir:-(empty)} is not a directory"
+	if [ -z "${dir}" ] || ! test -d "${dir}"
+	then	if ${umount}
+		then	Warning "${dir:-(empty)} is not a directory. Umounting anyway"
+		else	Fatal "${dir:-(empty)} is not a directory"
+		fi
+	fi
 fi
 
 devnode="/dev/zram${dev}"

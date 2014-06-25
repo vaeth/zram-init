@@ -38,6 +38,7 @@ An empty argument means the same as if the option is not specified.
 -t TYPE  Use a filesystem of type TYPE if DIR is specified.
          TYPE can be either ext2 or ext4.
          If not specified, TYPE=ext4 is assumed.
+-n NUM   (ext2, ext4 only) Specifiy fs inode count rather than using mkfs defaults.
 -k       Do no attempt to umount/free a previously used zram under this device."
 	exit ${1:-1}
 }
@@ -48,8 +49,9 @@ fstype=
 opts=
 mode=
 owgr=
+inodes=
 keep=false
-while getopts 'c:d:m:o:p:t:khH?' opt
+while getopts 'c:d:m:o:p:t:khn:H?' opt
 do	case ${opt} in
 	c)	owgr=${OPTARG};;
 	d)	dev=${OPTARG};;
@@ -57,6 +59,7 @@ do	case ${opt} in
 	o)	opts=${OPTARG};;
 	p)	prio=${OPTARG};;
 	t)	fstype=${OPTARG};;
+	n)	inodes=${OPTARG};;
 	k)	keep=:;;
 	*)	Usage 0;;
 	esac
@@ -117,14 +120,14 @@ fi
 fsopts='-O^huge_file,sparse_super'
 case ${fstype} in
 ext2)
-	mkfs.ext2 -m0 "${fsopts}" "${devnode}" >/dev/null \
+	mkfs.ext2 -m0 "${fsopts}" ${inodes:+-N ${inodes}} "${devnode}" >/dev/null \
 		|| Fatal "mkfs.ext2 ${devnode} failed"
 	tune2fs -c0 -i0 -m0 "${devnode}" >/dev/null
 	mount -t ext2 ${opts:+-o "${opts}"} -- "${devnode}" "${dir}" \
 		|| Fatal "mount ${devnode} failed";;
 ext4)
 	fsopts=${fsopts}',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
-	mkfs.ext4 -m0 "${fsopts}" "${devnode}" >/dev/null \
+	mkfs.ext4 -m0 "${fsopts}" ${inodes:+-N ${inodes}} "${devnode}" >/dev/null \
 		|| Fatal "mkfs.ext4 ${devnode} failed"
 	tune2fs -c0 -i0 -m0 "${devnode}" >/dev/null
 	mount -t ext4 ${opts:+-o "${opts}"} -- "${devnode}" "${dir}" \

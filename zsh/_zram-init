@@ -7,6 +7,8 @@ _arguments -s -S -A '-*' : \
 '-c+[OWNER (chown to OWNER)]:owner\:group:(nobody\:nogroup)' \
 '-m+[MODE (chmode to MODE)]:mode:(1777 755 770)' \
 '-o+[OPTS (mount options)]:mount options:(noatime relatime strictatime)' \
+'(-N)-i+[IRATIO (bytes/inodes ratio)]:inode ratio:(128 2048 4096 8192 32768 65536)' \
+'(-i)-N+[INODES (inodes count)]:inode count:(65536 262144 524288 1048576 4194304)' \
 '-k[do not remove previously used zram]' \
 '1:size in megabytes:(50 150 512 1024 2048 4096 8192)' \
 '2:directory:_files -/'

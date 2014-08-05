@@ -11,7 +11,6 @@ Echon() {
 
 Warning() {
 	Echo "${0##*/}: ${*}" >&2
-	exit 1
 }
 
 Fatal() {
@@ -28,6 +27,11 @@ The following options are available.
 An empty argument means the same as if the option is not specified.
 -d DEV   Use zram device DEV. If not specified, DEV=0 is assumed.
          Make sure to use the matching value for umounting (SIZE=0)!
+-D NUM   If modprobe needs to be used, require NUM devices. This is not
+         recommended. Rely instead on /etc/modprobe.d/zram.conf with the line
+         options zram num_devices=NUM
+-s NUM   Use up to NUM parallel compression streams for the device
+-a ALGO  Set compression algorithm to ALGO (e.g. lz4 or lzo)
 -c OWNER If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.
          If not specified, the default owner (root:root) is not changed.
 -m MODE  If specified, chmod DIR to MODE after mounting.
@@ -45,6 +49,9 @@ An empty argument means the same as if the option is not specified.
 }
 
 dev=
+num=
+streams=
+algo=
 prio=
 fstype=
 opts=
@@ -53,10 +60,13 @@ owgr=
 iratio=
 inodes=
 keep=false
-while getopts 'c:d:m:o:p:t:i:N:khH?' opt
+while getopts 's:a:c:d:D:m:o:p:t:i:N:khH?' opt
 do	case ${opt} in
+	s)	streams=${OPTARG};;
+	a)	algo=${OPTARG};;
 	c)	owgr=${OPTARG};;
 	d)	dev=${OPTARG};;
+	D)	num=${OPTARG};;
 	m)	mode=${OPTARG};;
 	o)	opts=${OPTARG};;
 	p)	prio=${OPTARG};;
@@ -95,7 +105,7 @@ fi
 devnode="/dev/zram${dev}"
 if ! test -e "${devnode}"
 then	${umount} && exit
-	modprobe zram >/dev/null 2>&1
+	modprobe zram ${num:+"num_devices=${num}"} >/dev/null 2>&1
 	test -e "${devnode}" || Fatal "cannot find ${devnode}"
 fi
 block="/sys/block/zram${dev}"
@@ -104,10 +114,19 @@ test -d "${block}" || Fatal "cannot find ${block}"
 if ! ${keep}
 then	swapoff -- "${devnode}" >/dev/null 2>&1 \
 	|| umount -- "${devnode}" >/dev/null 2>&1 \
-	&& Echon 1 >"${block}/reset"
+	&& {
+		Echon 1 >"${block}/reset" || \
+			Warning 'warning: failed to reset zram'
+	}
 fi
 status=${?}
 ${umount} && exit ${status}
+
+[ -z "${streams}" ] || Echon "${streams}" >"${block}/max_comp_streams" || \
+	Warning "warning: failed to set max_comp_streams to ${streams}"
+
+[ -z "${algo}" ] || Echon "${algo}" >"${block}/comp_algorithm" || \
+	Warning "warning: failed to set comp_algorithm to ${algo}"
 
 Echon "${size}" >"${block}/disksize" || Fatal "cannot set zram${dev} size"
 

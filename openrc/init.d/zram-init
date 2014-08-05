@@ -7,10 +7,10 @@ depend() {
 
 ZramInit() {
 	if [ "${fstype}" = swap ]
-	then	einfo "Swap->zram${i}"
-		zram-init -d "${i}" -p "${flag}" -- "${size}"
-	else	einfo "Mount zram${i} ${fstype}"
-		zram-init -d "${i}" -t "${flag}" \
+	then	einfo "Swap->zram${2}"
+		zram-init "${@}" -p "${flag}" -- "${size}"
+	else	einfo "Mount zram${2} ${fstype}"
+		zram-init "${@}" -t "${flag}" \
 			${opts:+-o "${opts}"} \
 			${owgr:+-c "${owgr}"} \
 			${mode:+-m "${mode}"} \
@@ -21,28 +21,37 @@ ZramInit() {
 
 ZramStop() {
 	if [ "${fstype}" = swap ]
-	then	einfo "Remove zram${i} swap"
-		zram-init -d "${i}" -- 0
-	else	einfo "Umount zram${i} ${fstype}"
-		zram-init -d "${i}" -- 0 "${fstype}"
+	then	einfo "Remove zram${2} swap"
+		zram-init "${@}" -- 0
+	else	einfo "Umount zram${2} ${fstype}"
+		zram-init "${@}" -- 0 "${fstype}"
 	fi
 	eend ${?}
 }
 
 ZramSanityCheck() {
+	num_device=${num_devices#+}
+	num_device=${num_devices#0}
 	: ${num_devices:=0}
+	case ${num_devices} in
+	*[!0-9]*)
+		return 1;;
+	esac
 	[ "${num_devices}" -gt 0 ]
 }
 
 ZramIgnore() {
 	eval "fstype=\${type${i}}
 		size=\${size${i}:-0}
+		maxs=\${maxs${i}}
+		algo=\${algo${i}}
 		flag=\${flag${i}}
 		opts=\${opts${i}}
 		owgr=\${owgr${i}}
 		mode=\${mode${i}}"
 	case ${fstype} in
-	swap|/*)	! [ "${size}" -gt 0 ];;
+	swap|/*)
+		! [ "${size}" -gt 0 ];;
 	esac
 }
 
@@ -57,7 +66,11 @@ start() {
 
 	i=0
 	while [ ${i} -lt "${num_devices}" ]
-	do	ZramIgnore || ZramInit
+	do	ZramIgnore || ZramInit \
+			-d "${i}" \
+			-D "${num_devices}" \
+			${maxs:+-s "${maxs}"} \
+			${algo:+-a "${algo}"}
 		i=$(( ${i} + 1 ))
 	done
 	:
@@ -68,7 +81,7 @@ stop() {
 
 	i=0
 	while [ ${i} -lt "${num_devices}" ]
-	do	ZramIgnore || ZramStop
+	do	ZramIgnore || ZramStop -d "${i}"
 		i=$(( ${i} + 1 ))
 	done
 

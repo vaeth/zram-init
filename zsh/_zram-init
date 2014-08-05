@@ -4,9 +4,12 @@ _arguments -s -S -A '-*' : \
 '-d+[DEV (use zram device DEV)]:device-nr:(/dev/zram*(\:t\:s/zram/))' \
 '(2 -t -c -m -o)-p+[PRIO (use priority PRIO for swap)]:priority for swap:(0 1 16383 -)' \
 '(-p)-t+[TYPE (use filesystem TYPE)]:filesystem type:(ext2 ext3)' \
+'-D+[NUM (use NUM devices if modprobe is called)]:number of devices:(1)' \
 '-c+[OWNER (chown to OWNER)]:owner\:group:(nobody\:nogroup)' \
 '-m+[MODE (chmode to MODE)]:mode:(1777 755 770)' \
 '-o+[OPTS (mount options)]:mount options:(noatime relatime strictatime)' \
+'-s+[MAX (use up to MAX parallel streams)]:maximal number of streams:(1)' \
+'-a+[ALGORITHM (set compression ALGORITHM)]:compression algorithm:(lzo lz4)' \
 '(-N)-i+[IRATIO (bytes/inodes ratio)]:inode ratio:(128 2048 4096 8192 32768 65536)' \
 '(-i)-N+[INODES (inodes count)]:inode count:(65536 262144 524288 1048576 4194304)' \
 '-k[do not remove previously used zram]' \

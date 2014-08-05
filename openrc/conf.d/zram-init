@@ -8,13 +8,15 @@ unload_on_stop="yes"
 
 # Number of devices.
 # This value is also passed to the kernel module on modprobe.
-num_devices="4"
+num_devices="3"
 
-# For each device, specify size, type, flags, opts mode, owgr.
+# For each device, specify type, size, maxs, algo, flags, opts mode, owgr.
 # The last three can be omitted for swap but *must* be specified for others.
 # Specify as empty if unneeded.
-# size0, size1, ... are the variables for the sizes.
 # type0, type1, ... are the variables for the types.
+# size0, size1, ... are the variables for the sizes.
+# maxs0, maxs1, ... are the variables for the maximal (parallel) streams.
+# algo0, algo1, ... are the variables for the compression algorithms.
 # flag0, flag1, ... are the variables for the flags.
 # Except for swap:
 # opts0, opts1, ... are the variables for the mount options.
@@ -38,6 +40,8 @@ num_devices="4"
 type0="swap"
 flag0="" # The default "16383" is fine for us
 size0="512"
+maxs0="1" # maximum number of parallel processes for this device
+algo0="lz4" # lz4 is faster than lzo
 
 # /tmp - 2G
 # If you use this, you should put zram-init into the boot runlevel,
@@ -49,6 +53,8 @@ size1="2048"
 opts1="strictatime" # e.g. "relatime" or "noatime" are also resonable choices
 mode1="1777"
 owgr1="" # No reason to change the default "root:root"
+maxs1="2"
+algo1="lz4"
 
 # /var/tmp - 1G
 type2="/var/tmp"
@@ -57,10 +63,17 @@ size2="1024"
 opts2="relatime" # e.g. "noatime" or "strictatime" are also resonable choices
 mode2="1777"
 owgr2="" # No reason to change the default "root:root"
+maxs1="1"
+algo1="lz4"
 
 # swap - 500M
-# It is recommended to use the same number of swaps (with the same settings)
-# as you have number of processors. Be aware that their maximal size adds up...
+# With current kernels, Instead of adding an additional swap device,
+# you better increase the size and maxs value of the first swap device.
+# Thus, the following makes only sense for older kernels not supporting maxs.
+# For this reason, the following is not used by the default (num_devices=3).
 type3="swap"
 flag3=""
 size3="512"
+algo3="lz4"
+maxs3="1"
+algo3="lz4"

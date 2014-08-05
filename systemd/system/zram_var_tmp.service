@@ -8,12 +8,13 @@ Before=umount.target display-manager.service
 Type=oneshot
 RemainAfterExit=true
 
-# Adapt the maximal size (in this example 2 GB) and other options to your needs.
+# Adapt the maximal size (in MB) and other options like maximal number of
+# parallel streams (-s) to your needs.
 # Make sure to avoid collision of devices (-d...) with
 # zram_swap.service and zram_tmp.service and
 # that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
 
-ExecStart=/usr/sbin/zram-init -d2 -text4 -orelatime -m1777 2048 /var/tmp
+ExecStart=/usr/sbin/zram-init -d2 -s2 -alz4 -text4 -orelatime -m1777 2048 /var/tmp
 ExecStop=/usr/sbin/zram-init -d2 0 /var/tmp
 
 [Install]

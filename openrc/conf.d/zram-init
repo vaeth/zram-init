@@ -10,8 +10,9 @@ unload_on_stop="yes"
 # This value is also passed to the kernel module on modprobe.
 num_devices="3"
 
-# For each device, specify type, size, maxs, algo, flags, opts mode, owgr.
-# The last three can be omitted for swap but *must* be specified for others.
+# For each device, specify
+#   type, size, maxs, algo, flags, opts, mode, owgrm, notr
+# The last 4 are ignored for type swap but not for the other types.
 # Specify as empty if unneeded.
 # type0, type1, ... are the variables for the types.
 # size0, size1, ... are the variables for the sizes.
@@ -22,6 +23,9 @@ num_devices="3"
 # opts0, opts1, ... are the variables for the mount options.
 # mode0, mode1, ... are the variables for the directory mode.
 # owgr0, owgr1, ... are the variables for the directory owner:group.
+# notr0, notr1, ... are the flags for "do not trim (discard)" (if nonempty)
+# (set notr* to a nonempty value only for linux-3.14 or earlier or when you
+# are prepared to waste a lot of memory for a possibly slight speed increase)
 #
 # The size is in megabytes.
 # If the size is 0 (or empty) the device is ignored by the script.
@@ -53,6 +57,7 @@ size1="2048"
 opts1="strictatime" # e.g. "relatime" or "noatime" are also resonable choices
 mode1="1777"
 owgr1="" # No reason to change the default "root:root"
+notr1="" # keep the default on linux-3.15 or newer
 maxs1="2"
 algo1="lz4"
 
@@ -63,8 +68,9 @@ size2="1024"
 opts2="relatime" # e.g. "noatime" or "strictatime" are also resonable choices
 mode2="1777"
 owgr2="" # No reason to change the default "root:root"
-maxs1="1"
-algo1="lz4"
+notr2="" # keep the default on linux-3.15 or newer
+maxs2="1"
+algo2="lz4"
 
 # swap - 500M
 # With current kernels, Instead of adding an additional swap device,

@@ -14,6 +14,7 @@ ZramInit() {
 			${opts:+-o "${opts}"} \
 			${owgr:+-c "${owgr}"} \
 			${mode:+-m "${mode}"} \
+			${notr:+-T} \
 			-- "${size}" "${fstype}"
 	fi
 	eend ${?}
@@ -48,7 +49,8 @@ ZramIgnore() {
 		flag=\${flag${i}}
 		opts=\${opts${i}}
 		owgr=\${owgr${i}}
-		mode=\${mode${i}}"
+		mode=\${mode${i}}
+		notr=\${notr${i}}"
 	case ${fstype} in
 	swap|/*)
 		! [ "${size}" -gt 0 ];;

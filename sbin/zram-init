@@ -44,6 +44,9 @@ An empty argument means the same as if the option is not specified.
          If not specified, TYPE=ext4 is assumed.
 -i IRATIO If specified override default bytes/inodes in fs (ext2, ext4)
 -N INODES If specified override inode count (ext2, ext4)
+-T       If specified, do not use the discard (TRIM) feature of ext4.
+         Use this option with linux-3.14 or earlier or when you want a slight
+         speed increase at the cost of possibly wasting a lot of memory
 -k       Do no attempt to umount/free a previously used zram under this device."
 	exit ${1:-1}
 }
@@ -60,7 +63,9 @@ owgr=
 iratio=
 inodes=
 keep=false
-while getopts 's:a:c:d:D:m:o:p:t:i:N:khH?' opt
+discard=:
+OPTIND=1
+while getopts 's:a:c:d:D:m:o:p:t:i:N:TkhH?' opt
 do	case ${opt} in
 	s)	streams=${OPTARG};;
 	a)	algo=${OPTARG};;
@@ -73,6 +78,7 @@ do	case ${opt} in
 	t)	fstype=${OPTARG};;
 	i)	iratio=${OPTARG};;
 	N)	inodes=${OPTARG};;
+	T)	discard=false;;
 	k)	keep=:;;
 	*)	Usage 0;;
 	esac
@@ -154,6 +160,7 @@ ext4)
 		${inodes:+-N "${inodes}"} "${devnode}" >/dev/null \
 		|| Fatal "mkfs.ext4 ${devnode} failed"
 	tune2fs -c0 -i0 -m0 "${devnode}" >/dev/null
+	! ${discard} || opts=${opts}${opts:+,}'discard'
 	mount -t ext4 ${opts:+-o "${opts}"} -- "${devnode}" "${dir}" \
 		|| Fatal "mount ${devnode} failed";;
 *)

@@ -6,74 +6,74 @@ depend() {
 }
 
 ZramInit() {
-	if [ "${fstype}" = swap ]
-	then	einfo "Swap->zram${2}"
-		zram-init "${@}" -p "${flag}" -- "${size}"
-	else	einfo "Mount zram${2} ${fstype}"
-		zram-init "${@}" -t "${flag}" \
-			${opts:+-o "${opts}"} \
-			${owgr:+-c "${owgr}"} \
-			${mode:+-m "${mode}"} \
+	if [ "$fstype" = swap ]
+	then	einfo "Swap->zram$2"
+		zram-init "$@" -p "$flag" -- "$size"
+	else	einfo "Mount zram$2 $fstype"
+		zram-init "$@" -t "$flag" \
+			${opts:+-o "$opts"} \
+			${owgr:+-c "$owgr"} \
+			${mode:+-m "$mode"} \
 			${notr:+-T} \
-			-- "${size}" "${fstype}"
+			-- "$size" "$fstype"
 	fi
-	eend ${?}
+	eend $?
 }
 
 ZramStop() {
-	if [ "${fstype}" = swap ]
-	then	einfo "Remove zram${2} swap"
-		zram-init "${@}" -- 0
-	else	einfo "Umount zram${2} ${fstype}"
-		zram-init "${@}" -- 0 "${fstype}"
+	if [ "$fstype" = swap ]
+	then	einfo "Remove zram$2 swap"
+		zram-init "$@" -- 0
+	else	einfo "Umount zram$2 $fstype"
+		zram-init "$@" -- 0 "$fstype"
 	fi
-	eend ${?}
+	eend $?
 }
 
 ZramSanityCheck() {
 	num_device=${num_devices#+}
 	num_device=${num_devices#0}
 	: ${num_devices:=0}
-	case ${num_devices} in
+	case $num_devices in
 	*[!0-9]*)
 		return 1;;
 	esac
-	[ "${num_devices}" -gt 0 ]
+	[ "$num_devices" -gt 0 ]
 }
 
 ZramIgnore() {
-	eval "fstype=\${type${i}}
-		size=\${size${i}:-0}
-		maxs=\${maxs${i}}
-		algo=\${algo${i}}
-		flag=\${flag${i}}
-		opts=\${opts${i}}
-		owgr=\${owgr${i}}
-		mode=\${mode${i}}
-		notr=\${notr${i}}"
-	case ${fstype} in
+	eval "fstype=\${type$i}
+		size=\${size$i:-0}
+		maxs=\${maxs$i}
+		algo=\${algo$i}
+		flag=\${flag$i}
+		opts=\${opts$i}
+		owgr=\${owgr$i}
+		mode=\${mode$i}
+		notr=\${notr$i}"
+	case $fstype in
 	swap|/*)
-		! [ "${size}" -gt 0 ];;
+		! [ "$size" -gt 0 ];;
 	esac
 }
 
 start() {
 	ZramSanityCheck || return 0
 
-	if yesno "${load_on_start}"
+	if yesno "$load_on_start"
 	then	einfo "Loading zram module..."
-		modprobe zram "num_devices=${num_devices}"
-		eend ${?}
+		modprobe zram "num_devices=$num_devices"
+		eend $?
 	fi
 
 	i=0
-	while [ ${i} -lt "${num_devices}" ]
+	while [ $i -lt "$num_devices" ]
 	do	ZramIgnore || ZramInit \
-			-d "${i}" \
-			-D "${num_devices}" \
-			${maxs:+-s "${maxs}"} \
-			${algo:+-a "${algo}"}
-		i=$(( ${i} + 1 ))
+			-d "$i" \
+			-D "$num_devices" \
+			${maxs:+-s "$maxs"} \
+			${algo:+-a "$algo"}
+		i=$(( $i + 1 ))
 	done
 	:
 }
@@ -82,14 +82,14 @@ stop() {
 	ZramSanityCheck || return 0
 
 	i=0
-	while [ ${i} -lt "${num_devices}" ]
-	do	ZramIgnore || ZramStop -d "${i}"
-		i=$(( ${i} + 1 ))
+	while [ $i -lt "$num_devices" ]
+	do	ZramIgnore || ZramStop -d "$i"
+		i=$(( $i + 1 ))
 	done
 
-	if yesno "${unload_on_stop}" in
+	if yesno "$unload_on_stop" in
 	then	einfo "Unloading zram module..."
 		modprobe -r zram
-		eend ${?}
+		eend $?
 	fi
 }

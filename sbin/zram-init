@@ -2,19 +2,19 @@
 # (C) Martin V\"ath <martin@mvath.de>"
 
 Echo() {
-	printf '%s\n' "${*}"
+	printf '%s\n' "$*"
 }
 
 Echon() {
-	printf '%s' "${*}"
+	printf '%s' "$*"
 }
 
 Warning() {
-	Echo "${0##*/}: ${*}" >&2
+	Echo "${0##*/}: $*" >&2
 }
 
 Fatal() {
-	Warning "${*}"
+	Warning "$*"
 	exit 1
 }
 
@@ -66,25 +66,25 @@ keep=false
 discard=:
 OPTIND=1
 while getopts 's:a:c:d:D:m:o:p:t:i:N:TkhH?' opt
-do	case ${opt} in
-	s)	streams=${OPTARG};;
-	a)	algo=${OPTARG};;
-	c)	owgr=${OPTARG};;
-	d)	dev=${OPTARG};;
-	D)	num=${OPTARG};;
-	m)	mode=${OPTARG};;
-	o)	opts=${OPTARG};;
-	p)	prio=${OPTARG};;
-	t)	fstype=${OPTARG};;
-	i)	iratio=${OPTARG};;
-	N)	inodes=${OPTARG};;
+do	case $opt in
+	s)	streams=$OPTARG;;
+	a)	algo=$OPTARG;;
+	c)	owgr=$OPTARG;;
+	d)	dev=$OPTARG;;
+	D)	num=$OPTARG;;
+	m)	mode=$OPTARG;;
+	o)	opts=$OPTARG;;
+	p)	prio=$OPTARG;;
+	t)	fstype=$OPTARG;;
+	i)	iratio=$OPTARG;;
+	N)	inodes=$OPTARG;;
 	T)	discard=false;;
 	k)	keep=:;;
 	*)	Usage 0;;
 	esac
 done
-shift $(( ${OPTIND} -1 ))
-[ ${#} -eq 1 ] || [ ${#} -eq 2 ] || Usage
+shift $(( $OPTIND -1 ))
+[ $# -eq 1 ] || [ $# -eq 2 ] || Usage
 
 # Defaults for empty/unspecified options:
 : ${dev:=0} ${prio:=16383} ${fstype:=ext4}
@@ -93,80 +93,80 @@ umount=:
 [ "${1:-0}" -ge 0 ] || Usage
 if [ "${1:-0}" -ne 0 ]
 then	umount=false
-	size=$(( ${1} * 1024 * 1024 )) && [ "${size}" -gt 0 ] || Usage
+	size=$(( $1 * 1024 * 1024 )) && [ "$size" -gt 0 ] || Usage
 fi
 
 swap=:
-if [ ${#} -eq 2 ]
+if [ $# -eq 2 ]
 then	swap=false
 	dir=${2%/}
-	if [ -z "${dir}" ] || ! test -d "${dir}"
-	then	if ${umount}
+	if [ -z "$dir" ] || ! test -d "$dir"
+	then	if $umount
 		then	Warning "${dir:-(empty)} is not a directory. Umounting anyway"
 		else	Fatal "${dir:-(empty)} is not a directory"
 		fi
 	fi
 fi
 
-devnode="/dev/zram${dev}"
-if ! test -e "${devnode}"
-then	${umount} && exit
-	modprobe zram ${num:+"num_devices=${num}"} >/dev/null 2>&1
-	test -e "${devnode}" || Fatal "cannot find ${devnode}"
+devnode=/dev/zram$dev
+if ! test -e "$devnode"
+then	$umount && exit
+	modprobe zram ${num:+"num_devices=$num"} >/dev/null 2>&1
+	test -e "$devnode" || Fatal "cannot find $devnode"
 fi
-block="/sys/block/zram${dev}"
-test -d "${block}" || Fatal "cannot find ${block}"
+block=/sys/block/zram$dev
+test -d "$block" || Fatal "cannot find $block"
 
-if ! ${keep}
-then	swapoff -- "${devnode}" >/dev/null 2>&1 \
-	|| umount -- "${devnode}" >/dev/null 2>&1 \
+if ! $keep
+then	swapoff -- "$devnode" >/dev/null 2>&1 \
+	|| umount -- "$devnode" >/dev/null 2>&1 \
 	&& {
-		Echon 1 >"${block}/reset" || \
+		Echon 1 >"$block/reset" || \
 			Warning 'warning: failed to reset zram'
 	}
 fi
-status=${?}
-${umount} && exit ${status}
+status=$?
+$umount && exit $status
 
-[ -z "${streams}" ] || Echon "${streams}" >"${block}/max_comp_streams" || \
-	Warning "warning: failed to set max_comp_streams to ${streams}"
+[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
+	Warning "warning: failed to set max_comp_streams to $streams"
 
-[ -z "${algo}" ] || Echon "${algo}" >"${block}/comp_algorithm" || \
-	Warning "warning: failed to set comp_algorithm to ${algo}"
+[ -z "$algo" ] || Echon "$algo" >"$block/comp_algorithm" || \
+	Warning "warning: failed to set comp_algorithm to $algo"
 
-Echon "${size}" >"${block}/disksize" || Fatal "cannot set zram${dev} size"
+Echon "$size" >"$block/disksize" || Fatal "cannot set zram$dev size"
 
-if ${swap}
-then	mkswap "${devnode}" >/dev/null || Fatal "mkswap ${devnode} failed"
-	if [ "${prio}" = '-' ]
-	then	swapon -- "${devnode}"
-	else	swapon -p "${prio}" -- "${devnode}"
+if $swap
+then	mkswap "$devnode" >/dev/null || Fatal "mkswap $devnode failed"
+	if [ "$prio" = '-' ]
+	then	swapon -- "$devnode"
+	else	swapon -p "$prio" -- "$devnode"
 	fi || Fatal "swapon failed"
 	exit 0
 fi
 
 fsopts='-O^huge_file,sparse_super'
-case ${fstype} in
+case $fstype in
 ext2)
-	mkfs.ext2 -m0 "${fsopts}" ${iratio:+-i "${iratio}"} \
-		${inodes:+-N "${inodes}"} "${devnode}" >/dev/null \
-		|| Fatal "mkfs.ext2 ${devnode} failed"
-	tune2fs -c0 -i0 -m0 "${devnode}" >/dev/null
-	mount -t ext2 ${opts:+-o "${opts}"} -- "${devnode}" "${dir}" \
-		|| Fatal "mount ${devnode} failed";;
+	mkfs.ext2 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
+		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
+		|| Fatal "mkfs.ext2 $devnode failed"
+	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	mount -t ext2 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+		|| Fatal "mount $devnode failed";;
 ext4)
-	fsopts=${fsopts}',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
-	mkfs.ext4 -m0 "${fsopts}" ${iratio:+-i "${iratio}"} \
-		${inodes:+-N "${inodes}"} "${devnode}" >/dev/null \
-		|| Fatal "mkfs.ext4 ${devnode} failed"
-	tune2fs -c0 -i0 -m0 "${devnode}" >/dev/null
-	! ${discard} || opts=${opts}${opts:+,}'discard'
-	mount -t ext4 ${opts:+-o "${opts}"} -- "${devnode}" "${dir}" \
-		|| Fatal "mount ${devnode} failed";;
+	fsopts=$fsopts',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
+	mkfs.ext4 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
+		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
+		|| Fatal "mkfs.ext4 $devnode failed"
+	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	! $discard || opts=$opts${opts:+,}'discard'
+	mount -t ext4 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+		|| Fatal "mount $devnode failed";;
 *)
-	Fatal "unsupported filesystem ${fstype}";;
+	Fatal "unsupported filesystem $fstype";;
 esac
 
 # Change owner/mode if requested
-[ -z "${owgr}" ] || chown -- "${owgr}" "${dir}"
-[ -z "${mode}" ] || chmod -- "${mode}" "${dir}"
+[ -z "$owgr" ] || chown -- "$owgr" "$dir"
+[ -z "$mode" ] || chmod -- "$mode" "$dir"

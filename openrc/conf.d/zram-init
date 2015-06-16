@@ -1,14 +1,14 @@
 # zram settings...
 
 # load zram kernel module on start?
-load_on_start="yes"
+load_on_start=yes
 
 # unload zram kernel module on stop?
-unload_on_stop="yes"
+unload_on_stop=yes
 
 # Number of devices.
 # This value is also passed to the kernel module on modprobe.
-num_devices="3"
+num_devices=3
 
 # For each device, specify
 #   type, size, maxs, algo, flags, opts, mode, owgrm, notr
@@ -41,45 +41,45 @@ num_devices="3"
 # Only variables with numbers  0 ... num_devices-1  are used by the script.
 
 # swap - 500M
-type0="swap"
-flag0="" # The default "16383" is fine for us
-size0="512"
-maxs0="1" # maximum number of parallel processes for this device
-algo0="lz4" # lz4 is faster than lzo
+type0=swap
+flag0= # The default "16383" is fine for us
+size0=512
+maxs0=1 # maximum number of parallel processes for this device
+algo0=lz4 # lz4 is faster than lzo
 
 # /tmp - 2G
 # If you use this, you should put zram-init into the boot runlevel,
 # and services using /tmp should be in the default runlevel and/or have
-# rc_need="zram-init" in their /etc/conf.d/... file
-type1="/tmp"
-flag1="ext4"
-size1="2048"
-opts1="strictatime" # e.g. "relatime" or "noatime" are also resonable choices
-mode1="1777"
-owgr1="" # No reason to change the default "root:root"
-notr1="" # keep the default on linux-3.15 or newer
-maxs1="2"
-algo1="lz4"
+# rc_need=zram-init in their /etc/conf.d/... file
+type1=/tmp
+flag1=ext4
+size1=2048
+opts1=strictatime # e.g. "relatime" or "noatime" are also resonable choices
+mode1=1777
+owgr1= # No reason to change the default "root:root"
+notr1= # keep the default on linux-3.15 or newer
+maxs1=2
+algo1=lz4
 
 # /var/tmp - 1G
-type2="/var/tmp"
-flag2="ext2"
-size2="1024"
-opts2="relatime" # e.g. "noatime" or "strictatime" are also resonable choices
-mode2="1777"
-owgr2="" # No reason to change the default "root:root"
-notr2="" # keep the default on linux-3.15 or newer
-maxs2="1"
-algo2="lz4"
+type2=/var/tmp
+flag2=ext2
+size2=1024
+opts2=relatime # e.g. "noatime" or "strictatime" are also resonable choices
+mode2=1777
+owgr2= # No reason to change the default "root:root"
+notr2= # keep the default on linux-3.15 or newer
+maxs2=1
+algo2=lz4
 
 # swap - 500M
 # With current kernels, Instead of adding an additional swap device,
 # you better increase the size and maxs value of the first swap device.
 # Thus, the following makes only sense for older kernels not supporting maxs.
 # For this reason, the following is not used by the default (num_devices=3).
-type3="swap"
-flag3=""
-size3="512"
-algo3="lz4"
-maxs3="1"
-algo3="lz4"
+type3=swap
+flag3=
+size3=512
+algo3=lz4
+maxs3=1
+algo3=lz4

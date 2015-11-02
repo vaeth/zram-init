@@ -47,10 +47,12 @@ An empty argument means the same as if the option is not specified.
 -T       If specified, do not use the discard (TRIM) feature of ext4.
          Use this option with linux-3.14 or earlier or when you want a slight
          speed increase at the cost of possibly wasting a lot of memory
+-L       Do not use zramctl even if available
 -k       Do no attempt to umount/free a previously used zram under this device."
 	exit ${1:-1}
 }
 
+PATH=${PATH-}${PATH:+:}/usr/sbin:/sbin
 dev=
 num=
 streams=
@@ -63,9 +65,10 @@ owgr=
 iratio=
 inodes=
 keep=false
+zramctl=:
 discard=:
 OPTIND=1
-while getopts 's:a:c:d:D:m:o:p:t:i:N:TkhH?' opt
+while getopts 's:a:c:d:D:m:o:p:t:i:N:TLkhH?' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
 	a)	algo=$OPTARG;;
@@ -79,12 +82,17 @@ do	case $opt in
 	i)	iratio=$OPTARG;;
 	N)	inodes=$OPTARG;;
 	T)	discard=false;;
+	L)	zramctl=false;;
 	k)	keep=:;;
 	*)	Usage 0;;
 	esac
 done
 shift $(( $OPTIND -1 ))
 [ $# -eq 1 ] || [ $# -eq 2 ] || Usage
+
+if $zramctl
+then	command -v zramctl >/dev/null 2>&1 || zramctl=false
+fi
 
 # Defaults for empty/unspecified options:
 : ${dev:=0} ${prio:=16383} ${fstype:=ext4}
@@ -114,27 +122,35 @@ then	$umount && exit
 	modprobe zram ${num:+"num_devices=$num"} >/dev/null 2>&1
 	test -e "$devnode" || Fatal "cannot find $devnode"
 fi
-block=/sys/block/zram$dev
-test -d "$block" || Fatal "cannot find $block"
+if ! $zramctl
+then	block=/sys/block/zram$dev
+	test -d "$block" || Fatal "cannot find $block"
+fi
 
 if ! $keep
 then	swapoff -- "$devnode" >/dev/null 2>&1 \
 	|| umount -- "$devnode" >/dev/null 2>&1 \
 	&& {
-		Echon 1 >"$block/reset" || \
-			Warning 'warning: failed to reset zram'
+		if $zramctl
+		then	zramctl --reset -- "$devnode"
+		else	Echon 1 >"$block/reset"
+		fi || Warning "warning: failed to reset zram$dev"
 	}
 fi
 status=$?
 $umount && exit $status
 
-[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
-	Warning "warning: failed to set max_comp_streams to $streams"
-
-[ -z "$algo" ] || Echon "$algo" >"$block/comp_algorithm" || \
-	Warning "warning: failed to set comp_algorithm to $algo"
-
-Echon "$size" >"$block/disksize" || Fatal "cannot set zram$dev size"
+if $zramctl
+then	zramctl --size "$size" \
+		${streams:+--streams} "$streams" \
+		${algo:+--algorithm} "$algo" \
+		-- "$devnode" || Fatal "zramctl zram$dev failed"
+else	[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
+		Warning "warning: failed to set max_comp_streams to $streams"
+	[ -z "$algo" ] || Echon "$algo" >"$block/comp_algorithm" || \
+		Warning "warning: failed to set comp_algorithm to $algo"
+	Echon "$size" >"$block/disksize" || Fatal "cannot set zram$dev size"
+fi
 
 if $swap
 then	mkswap "$devnode" >/dev/null || Fatal "mkswap $devnode failed"

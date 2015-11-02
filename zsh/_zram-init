@@ -13,5 +13,6 @@ _arguments -s -S -A '-*' : \
 '(-N)-i+[IRATIO (bytes/inodes ratio)]:inode ratio:(128 2048 4096 8192 32768 65536)' \
 '(-i)-N+[INODES (inodes count)]:inode count:(65536 262144 524288 1048576 4194304)' \
 '-k[do not remove previously used zram]' \
+'-L[do not use zramctl]' \
 '1:size in megabytes:(50 150 512 1024 2048 4096 8192)' \
 '2:directory:_files -/'

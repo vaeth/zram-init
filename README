@@ -20,4 +20,9 @@ For systemd support, the content of systemd/system should go into
 For systemd and optionally also for openrc the content of modprobe.d should go
 into /lib/modprobe.d or /etc/modprobe.d and be modified appropriately.
 
+To use LZ4 compression with zram your kernel needs to be compiled with option:
+
+CONFIG_ZRAM_LZ4_COMPRESS=y
+
 For Gentoo, there is an ebuild in the mv overlay (available by layman).
+For Alpine Linux a zram-init package is available.

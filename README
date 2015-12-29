@@ -1,5 +1,5 @@
 (C) Martin Väth <martin@mvath.de>
-Many thanks to Sven Eden <sven.eden at gmx.de> for contributing.
+Many thanks to all people in the AUTHORS file for contributing.
 The license of this package is the GNU Public License GPL-2.
 
 A wrapper script for the zram kernel module with interactive and init support.
@@ -24,5 +24,5 @@ To use LZ4 compression with zram your kernel needs to be compiled with option:
 
 CONFIG_ZRAM_LZ4_COMPRESS=y
 
-For Gentoo, there is an ebuild in the mv overlay (available by layman).
+For Gentoo, there is an ebuild in the main tree and in the mv overlay.
 For Alpine Linux a zram-init package is available.

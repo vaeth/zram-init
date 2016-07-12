@@ -6,11 +6,11 @@ depend() {
 }
 
 ZramInit() {
-	if [ "$fstype" = swap ]
+	if [ x"$fstype" = x'swap' ]
 	then	einfo "Swap->zram$2"
-		zram-init "$@" -p "$flag" -- "$size"
+		zram-init ${1+"$@"} -p "$flag" -- "$size"
 	else	einfo "Mount zram$2 $fstype"
-		zram-init "$@" -t "$flag" \
+		zram-init ${1+"$@"} -t "$flag" \
 			${opts:+-o "$opts"} \
 			${owgr:+-c "$owgr"} \
 			${mode:+-m "$mode"} \
@@ -21,11 +21,11 @@ ZramInit() {
 }
 
 ZramStop() {
-	if [ "$fstype" = swap ]
+	if [ x"$fstype" = x'swap' ]
 	then	einfo "Remove zram$2 swap"
-		zram-init "$@" -- 0
+		zram-init ${1+"$@"} -- 0
 	else	einfo "Umount zram$2 $fstype"
-		zram-init "$@" -- 0 "$fstype"
+		zram-init ${1+"$@"} -- 0 "$fstype"
 	fi
 	eend $?
 }

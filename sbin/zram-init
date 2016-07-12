@@ -154,7 +154,7 @@ fi
 
 if $swap
 then	mkswap "$devnode" >/dev/null || Fatal "mkswap $devnode failed"
-	if [ "$prio" = '-' ]
+	if [ x"$prio" = x'-' ]
 	then	swapon -- "$devnode"
 	else	swapon -p "$prio" -- "$devnode"
 	fi || Fatal "swapon failed"

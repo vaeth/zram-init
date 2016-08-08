@@ -23,6 +23,11 @@ Usage() {
 Prepare a zram device and use it as swap (resp. mount it under DIR).
 SIZE is the maximal size in megabytes.
 For umounting/freeing the zram device, use SIZE=0.
+If DIR is - then only a filesystem is created in /dev/zram\$DEV (or the device
+is removed if SIZE is 0) but it is not mounted
+(options -o -c -m -T take no effect in this case, of course).
+The latter can be useful e.g. for btrfs if multiple devices should be mounted
+jointly afterwards.
 The following options are available.
 An empty argument means the same as if the option is not specified.
 -d DEV   Use zram device DEV. If not specified, DEV=0 is assumed.
@@ -40,7 +45,7 @@ An empty argument means the same as if the option is not specified.
          If not specified, PRIO=16383 is assumed.
          Use PRIO=- if you want to keep the default priority (-1).
 -t TYPE  Use a filesystem of type TYPE if DIR is specified.
-         TYPE can be either ext2 or ext4.
+         TYPE can be either ext2, ext4, or btrfs
          If not specified, TYPE=ext4 is assumed.
 -i IRATIO If specified override default bytes/inodes in fs (ext2, ext4)
 -N INODES If specified override inode count (ext2, ext4)
@@ -107,8 +112,11 @@ fi
 swap=:
 if [ $# -eq 2 ]
 then	swap=false
+	mount=:
 	dir=${2%/}
-	if [ -z "$dir" ] || ! test -d "$dir"
+	if [ x"$dir" = x'-' ]
+	then	mount=false
+	elif [ -z "$dir" ] || ! test -d "$dir"
 	then	if $umount
 		then	Warning "${dir:-(empty)} is not a directory. Umounting anyway"
 		else	Fatal "${dir:-(empty)} is not a directory"
@@ -128,9 +136,10 @@ then	block=/sys/block/zram$dev
 fi
 
 if ! $keep
-then	swapoff -- "$devnode" >/dev/null 2>&1 \
-	|| umount -- "$devnode" >/dev/null 2>&1 \
-	&& {
+then	if $swap
+	then	swapoff -- "$devnode" >/dev/null 2>&1
+	else	! $mount || umount -- "$devnode" >/dev/null 2>&1
+	fi && {
 		if $zramctl
 		then	zramctl --reset -- "$devnode"
 		else	Echon 1 >"$block/reset"
@@ -142,8 +151,8 @@ $umount && exit $status
 
 if $zramctl
 then	zramctl --size "$size" \
-		${streams:+--streams} "$streams" \
-		${algo:+--algorithm} "$algo" \
+		${streams:+--streams "$streams"} \
+		${algo:+--algorithm "$algo"} \
 		-- "$devnode" || Fatal "zramctl zram$dev failed"
 else	[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
 		Warning "warning: failed to set max_comp_streams to $streams"
@@ -168,6 +177,7 @@ ext2)
 		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
 		|| Fatal "mkfs.ext2 $devnode failed"
 	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	$mount || exit 0
 	mount -t ext2 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 ext4)
@@ -176,8 +186,15 @@ ext4)
 		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
 		|| Fatal "mkfs.ext4 $devnode failed"
 	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	$mount || exit 0
 	! $discard || opts=$opts${opts:+,}'discard'
 	mount -t ext4 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+		|| Fatal "mount $devnode failed";;
+btrfs)
+	mkfs.btrfs -d single -m single "$devnode" >/dev/null \
+		|| Fatal "mkfs.btrfs $extnode failed"
+	$mount || exit 0
+	mount -t btrfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 *)
 	Fatal "unsupported filesystem $fstype";;

@@ -1,0 +1,21 @@
+[Unit]
+Description=Create btrfs on zram /dev/zram1 without mounting it
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+
+# Adapt the maximal size (in MB) and other options like maximal number of
+# parallel streams (-s) to your needs.
+# Make sure to avoid collision of devices (-d...) with
+# zram_swap.service, zram_var_tmp.service, zram_tmp.service, and
+# that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
+
+ExecStart=/usr/sbin/zram-init -d1 -s2 -alz4 -tbtrfs 2048 -
+ExecStop=/usr/sbin/zram-init -d1 0 -
+
+[Install]
+WantedBy=local-fs-pre.target

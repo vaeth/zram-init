@@ -35,8 +35,10 @@ num_devices=3
 #         The flags variable specifies the priority (16383 if empty).
 #         Use "-" in the flags variable for the default priority (-1)
 # "/..."  The device is mounted on /...
-#         The flags variable specifies the type (ext2 or ext4, default is ext4)
-# "-"     The filesystem is created in /dev/zram$NUM but not mounted
+#         The flags variable specifies the type (ext2, ext4, or btrfs;
+#         default is ext4)
+# "-"     The filesystem (specified by flags as above) is created in
+#         /dev/zram$NUM but not mounted
 # Devices with other types are ignored by the script
 #
 # Only variables with numbers  0 ... num_devices-1  are used by the script.

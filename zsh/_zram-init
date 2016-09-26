@@ -1,6 +1,6 @@
 #compdef zram-init
 _arguments -s -S -A '-*' : \
-'(* -)'{'-h','-H','-\\?'}'[help]' \
+'(* -)'{'-h','-H'}'[help]' \
 '-d+[DEV (use zram device DEV)]:device-nr:(/dev/zram*(\:t\:s/zram/))' \
 '(2 -t -c -m -o)-p+[PRIO (use priority PRIO for swap)]:priority for swap:(0 1 16383 -)' \
 '(-p)-t+[TYPE (use filesystem TYPE)]:filesystem type:(ext2 ext3 btrfs)' \

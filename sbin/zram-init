@@ -73,7 +73,7 @@ keep=false
 zramctl=:
 discard=:
 OPTIND=1
-while getopts 's:a:c:d:D:m:o:p:t:i:N:TLkhH?' opt
+while getopts 's:a:c:d:D:m:o:p:t:i:N:TLkhH' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
 	a)	algo=$OPTARG;;
@@ -89,6 +89,7 @@ do	case $opt in
 	T)	discard=false;;
 	L)	zramctl=false;;
 	k)	keep=:;;
+	'?')	exit 1;;
 	*)	Usage 0;;
 	esac
 done

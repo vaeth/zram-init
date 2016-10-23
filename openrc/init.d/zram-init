@@ -6,16 +6,20 @@ depend() {
 }
 
 ZramInit() {
+	set -- ${1+"$@"} -D "$num_devices" \
+		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} \
+		${labl:+-L "$labl"} ${uuid:+-U "$uuid"}
+	[ -z "${args:++}" ] || eval 'set -- "$@" '"$args"
 	if [ x"$fstype" = x'swap' ]
 	then	einfo "Swap->zram$2"
-		zram-init ${1+"$@"} -p "$flag" -- "$size"
+		zram-init -p "$flag" ${1+"$@"} -- "$size"
 	else	einfo "Mount zram$2 $fstype"
-		zram-init ${1+"$@"} -t "$flag" \
+		zram-init -t "$flag" \
 			${opts:+-o "$opts"} \
 			${owgr:+-c "$owgr"} \
 			${mode:+-m "$mode"} \
 			${notr:+-T} \
-			-- "$size" "$fstype"
+			${1+"$@"} -- "$size" "$fstype"
 	fi
 	eend $?
 }
@@ -42,15 +46,18 @@ ZramSanityCheck() {
 }
 
 ZramIgnore() {
-	eval "fstype=\${type$i}
-		size=\${size$i:-0}
-		maxs=\${maxs$i}
-		algo=\${algo$i}
-		flag=\${flag$i}
-		opts=\${opts$i}
-		owgr=\${owgr$i}
-		mode=\${mode$i}
-		notr=\${notr$i}"
+	eval "fstype=\${type$1-}
+		size=\${size$1:-0}
+		maxs=\${maxs$1-}
+		algo=\${algo$1-}
+		flag=\${flag$1-}
+		opts=\${opts$1-}
+		owgr=\${owgr$1-}
+		mode=\${mode$1-}
+		labl=\${labl$1-}
+		uuid=\${uuid$1-}
+		notr=\${notr$1-}
+		args=\${uuid$1-}"
 	case $fstype in
 	swap|/*)
 		! [ "$size" -gt 0 ];;
@@ -61,18 +68,14 @@ start() {
 	ZramSanityCheck || return 0
 
 	if yesno "$load_on_start"
-	then	einfo "Loading zram module..."
+	then	einfo 'Loading zram module...'
 		modprobe zram "num_devices=$num_devices"
 		eend $?
 	fi
 
 	i=0
 	while [ $i -lt "$num_devices" ]
-	do	ZramIgnore || ZramInit \
-			-d "$i" \
-			-D "$num_devices" \
-			${maxs:+-s "$maxs"} \
-			${algo:+-a "$algo"}
+	do	ZramIgnore "$i" || ZramInit -d "$i"
 		i=$(( $i + 1 ))
 	done
 	:
@@ -83,12 +86,12 @@ stop() {
 
 	i=0
 	while [ $i -lt "$num_devices" ]
-	do	ZramIgnore || ZramStop -d "$i"
+	do	ZramIgnore "$i" || ZramStop -d "$i"
 		i=$(( $i + 1 ))
 	done
 
 	if yesno "$unload_on_stop" in
-	then	einfo "Unloading zram module..."
+	then	einfo 'Unloading zram module...'
 		modprobe -r zram
 		eend $?
 	fi

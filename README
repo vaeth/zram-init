@@ -11,6 +11,9 @@ If zramctl (from >=util-linux-2.26) is available, this is used by default.
 Currently, this is not a dependency: a manual method is provided as a fallback.
 The latter might be removed in a future release of this script.
 
+If you want to use one of the options -K -M -2 -Z to pass generic args,
+you need push.sh in your $PATH, see see https://github.com/vaeth/push/
+
 To install this script, just copy the content of sbin into root's $PATH.
 To obtain support for zsh completion, copy the content of zsh to zsh's $fpath.
 For openrc support, the content of openrc should go into /etc

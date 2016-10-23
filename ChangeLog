@@ -1,0 +1,60 @@
+# ChangeLog for zram-init:
+
+*zram-init-4.0.0:
+	Martin Väth <martin at mvath.de>:
+	- New options -K -M -2 -Z for generic argument passing; usage requires
+	  push.sh being in $PATH, see https://github.com/vaeth/push/
+	- New options -L (label) -U (uuid)
+	- Rename option -L -> -l
+	- Reformulate zsh completion help texts
+
+*zram-init-3.8.1:
+	Martin Väth <martin at mvath.de>:
+	- Fix getopts usage
+
+*zram-init-3.8:
+	Martin Väth <martin at mvath.de>:
+	- Update description in comments
+	- Fix if -s or -a miss. Support btrfs. Support dir - (non-mounting)
+
+*zram-init-3.7:
+	Martin Väth <martin at mvath.de>:
+	- Some Bourne shell compatibility
+
+*zram-init-3.6:
+	Stuart <itoffshore at users.noreply.github.com>:
+	- add sensible defaults for /tmp
+
+*zram-init-3.5:
+	Martin Väth <martin at mvath.de>:
+	- Use zramctl if available
+
+*zram-init-3.4:
+	Martin Väth <martin at mvath.de>:
+	- set -u
+
+*zram-init-3.3:
+	Martin Väth <martin at mvath.de>:
+	- Remove redundant sh quoting
+
+*zram-init-3.2:
+	Martin Väth <martin at mvath.de>:
+	- Support/default to discard for ext4
+
+*zram-init-3.1:
+	Martin Väth <martin at mvath.de>:
+	- Use openrc-run instead of deprecated runscript
+
+*zram-init-3.0:
+	Martin Väth <martin at mvath.de>:
+	- new options -D (device number), -s (stream number), -a (algorithm)
+
+*zram-init-2.8:
+	Thomas Kear <thomas.kear at gmail.com>:
+	- new option -n (inode count)
+
+*zram-init-2.7:
+	Martin Väth <martin at mvath.de>:
+	- Support umounting
+	- New options -c -m -o (ownership, mode, mount options)
+	  Thanks to Sven Eden

@@ -18,6 +18,11 @@ Fatal() {
 	exit 1
 }
 
+Push() {
+	. push.sh
+	Push "$@"
+}
+
 Usage() {
 	Echo "Usage: ${0##*/} [options] SIZE [DIR]
 Prepare a zram device and use it as swap (resp. mount it under DIR).
@@ -49,11 +54,19 @@ An empty argument means the same as if the option is not specified.
          If not specified, TYPE=ext4 is assumed.
 -i IRATIO If specified override default bytes/inodes in fs (ext2, ext4)
 -N INODES If specified override inode count (ext2, ext4)
+-L LABEL Specify the label LABEL for the new filesystem
+-U UUID  Specify the uuid UUID for the new filesystem
 -T       If specified, do not use the discard (TRIM) feature of ext4.
          Use this option with linux-3.14 or earlier or when you want a slight
          speed increase at the cost of possibly wasting a lot of memory
--L       Do not use zramctl even if available
--k       Do no attempt to umount/free a previously used zram under this device."
+-l       Do not use zramctl even if available
+-k       Do no attempt to umount/free a previously used zram under this device
+
+If you have push.sh in \$PATH, you can also use accumulatively:
+-K ARG   Pass ARG to the respective mkswap or mkfs.* call
+-M ARG   Pass ARG to the respective swapon/mount call
+-2 ARG   Pass ARG to the tune2fs call (ignored unless for ext2 or ext4)
+-Z ARG   Pass ARG to the zramctl call"
 	exit ${1:-1}
 }
 
@@ -69,11 +82,17 @@ mode=
 owgr=
 iratio=
 inodes=
+label=
+uuid=
 keep=false
 zramctl=:
 discard=:
+mkfs_opt=
+mount_opt=
+tune2fs_opt=
+zramctl_opt=
 OPTIND=1
-while getopts 's:a:c:d:D:m:o:p:t:i:N:TLkhH' opt
+while getopts 's:a:c:d:D:m:o:p:t:i:N:L:U:TlkK:M:2:Z:hH' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
 	a)	algo=$OPTARG;;
@@ -86,9 +105,15 @@ do	case $opt in
 	t)	fstype=$OPTARG;;
 	i)	iratio=$OPTARG;;
 	N)	inodes=$OPTARG;;
+	L)	label=$OPTARG;;
+	U)	uuid=$OPTARG;;
 	T)	discard=false;;
-	L)	zramctl=false;;
+	l)	zramctl=false;;
 	k)	keep=:;;
+	K)	Push mkfs_opt "$OPTARG";;
+	M)	Push mount_opt "$OPTARG";;
+	2)	Push tune2fs_opt "$OPTARG";;
+	Z)	Push zramctl_opt "$OPTARG";;
 	'?')	exit 1;;
 	*)	Usage 0;;
 	esac
@@ -151,9 +176,11 @@ status=$?
 $umount && exit $status
 
 if $zramctl
-then	zramctl --size "$size" \
+then	eval "set -- a $zramctl_opt"
+	shift
+	zramctl --size "$size" \
 		${streams:+--streams "$streams"} \
-		${algo:+--algorithm "$algo"} \
+		${algo:+--algorithm "$algo"} ${1+"$@"} \
 		-- "$devnode" || Fatal "zramctl zram$dev failed"
 else	[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
 		Warning "warning: failed to set max_comp_streams to $streams"
@@ -162,8 +189,12 @@ else	[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
 	Echon "$size" >"$block/disksize" || Fatal "cannot set zram$dev size"
 fi
 
+eval "set -- a $mkfs_opt"
+shift
+
 if $swap
-then	mkswap "$devnode" >/dev/null || Fatal "mkswap $devnode failed"
+then	mkswap ${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
+		-- "$devnode" >/dev/null || Fatal "mkswap $devnode failed"
 	if [ x"$prio" = x'-' ]
 	then	swapon -- "$devnode"
 	else	swapon -p "$prio" -- "$devnode"
@@ -175,26 +206,42 @@ fsopts='-O^huge_file,sparse_super'
 case $fstype in
 ext2)
 	mkfs.ext2 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
-		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
+		${inodes:+-N "$inodes"} \
+		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
+		-- "$devnode" >/dev/null \
 		|| Fatal "mkfs.ext2 $devnode failed"
-	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	eval "set -- a $tune2fs_opt"
+	shift
+	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
 	$mount || exit 0
+	eval "set -- a $mount_opt"
+	shift
 	mount -t ext2 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 ext4)
 	fsopts=$fsopts',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
 	mkfs.ext4 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
-		${inodes:+-N "$inodes"} "$devnode" >/dev/null \
+		${inodes:+-N "$inodes"} \
+		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
+		-- "$devnode" >/dev/null \
 		|| Fatal "mkfs.ext4 $devnode failed"
-	tune2fs -c0 -i0 -m0 "$devnode" >/dev/null
+	eval "set -- a $tune2fs_opt"
+	shift
+	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
 	$mount || exit 0
 	! $discard || opts=$opts${opts:+,}'discard'
+	eval "set -- a $mount_opt"
+	shift
 	mount -t ext4 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 btrfs)
-	mkfs.btrfs -d single -m single "$devnode" >/dev/null \
+	mkfs.btrfs -d single -m single \
+		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
+		-- "$devnode" >/dev/null \
 		|| Fatal "mkfs.btrfs $extnode failed"
 	$mount || exit 0
+	eval "set -- a $mount_opt"
+	shift
 	mount -t btrfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 *)

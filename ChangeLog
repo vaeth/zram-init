@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-5.0.0:
+	Martin Väth <martin at mvath.de>:
+	- Require >=push-v2.0 to provide a more descriptive error message
+
 *zram-init-4.0.0:
 	Martin Väth <martin at mvath.de>:
 	- New options -K -M -2 -Z for generic argument passing; usage requires

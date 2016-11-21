@@ -1,5 +1,12 @@
 # ChangeLog for zram-init:
 
+*zram-init-6.0.0:
+	Martin Väth <martin at mvath.de>:
+	- Add/remove devices if kernel supports it, see
+	  https://github.com/vaeth/zram-init/issues/9
+	- Add argument sanity checks
+	- Add optional timeouts after modprobe and adding devices
+
 *zram-init-5.0.0:
 	Martin Väth <martin at mvath.de>:
 	- Require >=push-v2.0 to provide a more descriptive error message

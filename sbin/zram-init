@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
-# (C) Martin V\"ath <martin@mvath.de>"
+# (C) Martin V\"ath <martin@mvath.de>
 set -u
 Echo() {
 	printf '%s\n' "$*"
 }
 
-Echon() {
-	printf '%s' "$*"
+SysCtl() {
+	printf '%s' "$1" >|"$2"
 }
 
 Warning() {
@@ -20,9 +20,17 @@ Fatal() {
 
 Push() {
 	PushA_=`push.sh 2>/dev/null` || Fatal \
-"push.sh from https://github.com/vaeth/push (v2.0 or newer) required"
+'push.sh from https://github.com/vaeth/push (v2.0 or newer) required'
 	eval "$PushA_"
 	Push "$@"
+}
+
+IsNumeric() {
+	case ${1:-x} in
+	*[!01234567890]*)
+		return 1;;
+	esac
+	:
 }
 
 Usage() {
@@ -130,11 +138,14 @@ fi
 # Defaults for empty/unspecified options:
 : ${dev:=0} ${prio:=16383} ${fstype:=ext4}
 
+IsNumeric "$dev" || Fatal "device $dev is not numeric"
+IsNumeric "${1:-0}" || Fatal "size $1 is not numeric"
+
 umount=:
-[ "${1:-0}" -ge 0 ] || Usage
-if [ "${1:-0}" -ne 0 ]
+if [ ${1:-0} -ne 0 ]
 then	umount=false
-	size=$(( $1 * 1024 * 1024 )) && [ "$size" -gt 0 ] || Usage
+	size=$(( $1 * 1024 * 1024 )) && [ $size -gt 0 ] || \
+		Fatal 'failed to calculate size'
 fi
 
 swap=:
@@ -153,10 +164,40 @@ then	swap=false
 fi
 
 devnode=/dev/zram$dev
-if ! test -e "$devnode"
+zclass=/sys/class/zram-control
+if ! test -b "$devnode"
 then	$umount && exit
-	modprobe zram ${num:+"num_devices=$num"} >/dev/null 2>&1
-	test -e "$devnode" || Fatal "cannot find $devnode"
+	IsNumeric "${num:-0}" || Fatal "device count $num is not numeric"
+	modprobe zram ${num:+num_devices=$num} >/dev/null 2>&1
+	sleep=0
+	while ! test -b "$devnode" && ! test -d "$zclass"
+	do	sleep 1
+		sleep=$(( $sleep + 1 ))
+		[ $sleep -lt 5 ] || \
+			Fatal "cannot create $devnode: $zclass missing"
+	done
+	if ! test -b "$devnode"
+	then	while :
+		do	curradd=
+			exec 3<&0 && {
+				exec <"$zclass/hot_add" && \
+					read curradd || curradd=
+				exec 0<&3
+				exec 3<&-
+			}
+			IsNumeric "$curradd" || {
+				Warning "warning: hot_add failed for $devnode"
+				break
+			}
+			[ $curradd -lt $dev ] || break
+		done
+		sleep=0
+		while ! test -b "$devnode"
+		do	sleep 1
+			sleep=$(( $sleep + 1 ))
+			[ $sleep -lt 5 ] || Fatal "failed to create $devnode"
+		done
+	fi
 fi
 if ! $zramctl
 then	block=/sys/block/zram$dev
@@ -170,7 +211,10 @@ then	if $swap
 	fi && {
 		if $zramctl
 		then	zramctl --reset -- "$devnode"
-		else	Echon 1 >"$block/reset"
+		else	SysCtl 1 "$block/reset" && {
+				! test -w "$zclass/hot_remove" || \
+					SysCtl "$device" "$zclass/hot_remove"
+			}
 		fi || Warning "warning: failed to reset zram$dev"
 	}
 fi
@@ -184,11 +228,11 @@ then	eval "set -- a $zramctl_opt"
 		${streams:+--streams "$streams"} \
 		${algo:+--algorithm "$algo"} ${1+"$@"} \
 		-- "$devnode" || Fatal "zramctl zram$dev failed"
-else	[ -z "$streams" ] || Echon "$streams" >"$block/max_comp_streams" || \
+else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" || \
 		Warning "warning: failed to set max_comp_streams to $streams"
-	[ -z "$algo" ] || Echon "$algo" >"$block/comp_algorithm" || \
+	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
 		Warning "warning: failed to set comp_algorithm to $algo"
-	Echon "$size" >"$block/disksize" || Fatal "cannot set zram$dev size"
+	SysCtl "$size" "$block/disksize" || Fatal "cannot set zram$dev size"
 fi
 
 eval "set -- a $mkfs_opt"

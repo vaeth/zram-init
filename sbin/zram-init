@@ -165,6 +165,30 @@ fi
 
 devnode=/dev/zram$dev
 zclass=/sys/class/zram-control
+
+HotAdd() {
+	while :
+	do	curradd=
+		exec 3<&0 && {
+			exec <"$zclass/hot_add" && \
+				read curradd || curradd=
+			exec 0<&3
+			exec 3<&-
+		}
+		IsNumeric "$curradd" || {
+			Warning "warning: hot_add failed for $devnode"
+			break
+		}
+		[ $curradd -lt $dev ] || break
+	done
+	sleep=0
+	while ! test -b "$devnode"
+	do	sleep 1
+		sleep=$(( $sleep + 1 ))
+		[ $sleep -lt 5 ] || Fatal "failed to create $devnode"
+	done
+}
+
 if ! test -b "$devnode"
 then	$umount && exit
 	IsNumeric "${num:-0}" || Fatal "device count $num is not numeric"
@@ -176,50 +200,38 @@ then	$umount && exit
 		[ $sleep -lt 5 ] || \
 			Fatal "cannot create $devnode: $zclass missing"
 	done
-	if ! test -b "$devnode"
-	then	while :
-		do	curradd=
-			exec 3<&0 && {
-				exec <"$zclass/hot_add" && \
-					read curradd || curradd=
-				exec 0<&3
-				exec 3<&-
-			}
-			IsNumeric "$curradd" || {
-				Warning "warning: hot_add failed for $devnode"
-				break
-			}
-			[ $curradd -lt $dev ] || break
-		done
-		sleep=0
-		while ! test -b "$devnode"
-		do	sleep 1
-			sleep=$(( $sleep + 1 ))
-			[ $sleep -lt 5 ] || Fatal "failed to create $devnode"
-		done
-	fi
+	test -b "$devnode" || {
+		HotAdd
+		keep=:
+	}
 fi
 if ! $zramctl
 then	block=/sys/block/zram$dev
 	test -d "$block" || Fatal "cannot find $block"
 fi
 
+status=0
 if ! $keep
 then	if $swap
-	then	swapoff -- "$devnode" >/dev/null 2>&1
-	else	! $mount || umount -- "$devnode" >/dev/null 2>&1
-	fi && {
-		if $zramctl
-		then	zramctl --reset -- "$devnode"
-		else	SysCtl 1 "$block/reset" && {
-				! test -w "$zclass/hot_remove" || \
-					SysCtl "$device" "$zclass/hot_remove"
-			}
-		fi || Warning "warning: failed to reset zram$dev"
-	}
+	then	swapoff -- "$devnode" >/dev/null 2>&1 || status=$?
+	elif $mount
+	then	umount -- "$devnode" >/dev/null 2>&1 || status=$?
+	fi
+	if [ $status -eq 0 ]
+	then	if $zramctl
+		then	zramctl --reset -- "$devnode" || status=$?
+		else	SysCtl 1 "$block/reset" || status=$?
+			if $umount && test -w "$zclass/hot_remove"
+			then	SysCtl "$device" "$zclass/hot_remove" \
+					|| status=$?
+			fi
+		fi
+		[ $status -eq 0 ] || \
+			Warning "warning: failed to reset zram$dev"
+	fi
 fi
-status=$?
 $umount && exit $status
+test -b "$devnode" || HotAdd
 
 if $zramctl
 then	eval "set -- a $zramctl_opt"

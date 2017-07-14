@@ -18,9 +18,11 @@ https://github.com/vaeth/push/
 To install this script, just copy the content of sbin into root's $PATH.
 To obtain support for zsh completion, copy the content of zsh to zsh's $fpath.
 For openrc support, the content of openrc should go into /etc
-For systemd support, the content of systemd/system should go into
-/usr/lib/systemd/system or into /etc/systemd/system and be modified
-(and enabled with systemctl enable ...) for the desired setting.
+For systemd support, the content of systemd/system should go into a systemd
+unit directory ("`pkg-config --variable=systemdsystemunitdir systemd`",
+usually /lib/systemd/system or /usr/lib/systemd/system) and be modified
+and enabled with systemctl enable ... for the desired setting.
+(Or install locally, e.g. directly into /etc/systemd/system).
 For systemd and optionally also for openrc the content of modprobe.d should go
 into /lib/modprobe.d or /etc/modprobe.d and be modified appropriately.
 

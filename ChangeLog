@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-6.1.1:
+	Martin Väth <martin at mvath.de>:
+	- Fix README concerning the installation of systemd unit files
+
 *zram-init-6.1.0:
 	Martin Väth <martin at mvath.de>:
 	- Re-add device after zramctl --reset

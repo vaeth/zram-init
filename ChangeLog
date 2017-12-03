@@ -1,5 +1,11 @@
 # ChangeLog for zram-init:
 
+*zram-init-7.0:
+	Martin Väth <martin at mvath.de>:
+	- Support discard also for swap
+	- Support mem_limit
+	- Support backup_dev
+
 *zram-init-6.1.2:
 	Martin Väth <martin at mvath.de>:
 	- systemd unit files: /usr/sbin/zram-init -> /sbin/zram-init

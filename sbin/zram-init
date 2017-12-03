@@ -51,6 +51,8 @@ An empty argument means the same as if the option is not specified.
          recommended. Rely instead on /etc/modprobe.d/zram.conf with the line
          options zram num_devices=NUM
 -s NUM   Use up to NUM parallel compression streams for the device
+-S MAX   Use maximally MAX megabytes of uncompressed memory for the device
+-b DEV   Use DEV as backing device
 -a ALGO  Set compression algorithm to ALGO (e.g. lz4 or lzo)
 -c OWNER If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.
          If not specified, the default owner (root:root) is not changed.
@@ -66,7 +68,7 @@ An empty argument means the same as if the option is not specified.
 -N INODES If specified override inode count (ext2, ext4)
 -L LABEL Specify the label LABEL for the new filesystem
 -U UUID  Specify the uuid UUID for the new filesystem
--T       If specified, do not use the discard (TRIM) feature of ext4.
+-T       If specified, do not use the discard (TRIM) feature of ext4/swap.
          Use this option with linux-3.14 or earlier or when you want a slight
          speed increase at the cost of possibly wasting a lot of memory
 -l       Do not use zramctl even if available
@@ -101,11 +103,15 @@ mkfs_opt=
 mount_opt=
 tune2fs_opt=
 zramctl_opt=
+mem_limit=
+backing_dev=
 OPTIND=1
-while getopts 's:a:c:d:D:m:o:p:t:i:N:L:U:TlkK:M:2:Z:hH' opt
+while getopts 's:S:a:b:c:d:D:m:o:p:t:i:N:L:U:TlkK:M:2:Z:hH' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
+	S)	mem_limit=$OPTARG;;
 	a)	algo=$OPTARG;;
+	b)	backing_dev=$OPTARG;;
 	c)	owgr=$OPTARG;;
 	d)	dev=$OPTARG;;
 	D)	num=$OPTARG;;
@@ -205,9 +211,9 @@ then	$umount && exit
 		keep=:
 	}
 fi
-if ! $zramctl
-then	block=/sys/block/zram$dev
-	test -d "$block" || Fatal "cannot find $block"
+block=/sys/block/zram$dev
+if ! $zramctl || [ -n "$mem_limit" ] || [ -n "${backing_dev:++}" ]
+then	test -d "$block" || Fatal "cannot find $block"
 fi
 
 status=0
@@ -233,7 +239,7 @@ fi
 $umount && exit $status
 test -b "$devnode" || HotAdd
 
-if $zramctl
+if $zramctl && [ -z "${backing_dev:++}" ]
 then	eval "set -- a $zramctl_opt"
 	shift
 	zramctl --size "$size" \
@@ -241,11 +247,16 @@ then	eval "set -- a $zramctl_opt"
 		${algo:+--algorithm "$algo"} ${1+"$@"} \
 		-- "$devnode" || Fatal "zramctl zram$dev failed"
 else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" || \
-		Warning "warning: failed to set max_comp_streams to $streams"
+		Warning "warning: failed to set zram$dev max_comp_streams to $streams"
 	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
-		Warning "warning: failed to set comp_algorithm to $algo"
+		Warning "warning: failed to set zram$dev comp_algorithm to $algo"
+	[ -z "${backing_dev:++}" ] || \
+		SysCtl "$backing_dev" "$block/backing_dev" || \
+		Warning "warning: failed to set zram$dev backing_dev"
 	SysCtl "$size" "$block/disksize" || Fatal "cannot set zram$dev size"
 fi
+[ -z "$mem_limit" ] || SysCtl "$mem_limit" "$block/mem_limit" || \
+	Warning "warning: failed to set zram$dev mem_limit"
 
 eval "set -- a $mkfs_opt"
 shift
@@ -253,10 +264,11 @@ shift
 if $swap
 then	mkswap ${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null || Fatal "mkswap $devnode failed"
-	if [ x"$prio" = x'-' ]
-	then	swapon -- "$devnode"
-	else	swapon -p "$prio" -- "$devnode"
-	fi || Fatal "swapon failed"
+	discardopt=-d
+	$discard || discardopt=
+	[ x"$prio" != x'-' ] || prio=
+	swapon ${prio:+-p "$prio"} $discardopt -- "$devnode" \
+		|| Fatal "swapon $devnode failed"
 	exit 0
 fi
 

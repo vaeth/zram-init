@@ -7,6 +7,7 @@ depend() {
 
 ZramInit() {
 	set -- ${1+"$@"} -D "$num_devices" \
+		${mlim:+-S "$mlim"} ${back:+-b "$back"} ${notr:+-T} \
 		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} \
 		${labl:+-L "$labl"} ${uuid:+-U "$uuid"}
 	[ -z "${args:++}" ] || eval 'set -- "$@" '"$args"
@@ -18,7 +19,6 @@ ZramInit() {
 			${opts:+-o "$opts"} \
 			${owgr:+-c "$owgr"} \
 			${mode:+-m "$mode"} \
-			${notr:+-T} \
 			${1+"$@"} -- "$size" "$fstype"
 	fi
 	eend $?
@@ -48,6 +48,8 @@ ZramSanityCheck() {
 ZramIgnore() {
 	eval "fstype=\${type$1-}
 		size=\${size$1:-0}
+		mlim=\${mlim$1}
+		back=\${back$1}
 		maxs=\${maxs$1-}
 		algo=\${algo$1-}
 		flag=\${flag$1-}

@@ -4,11 +4,13 @@ _arguments -s -S -A '-*' : \
 '-d+[use specified zram device nr]:device-nr:(/dev/zram*(\:t\:s/zram/))' \
 '(2 -t -c -m -o)-p+[use specified priority for swap]:priority for swap:(0 1 16383 -)' \
 '(-p)-t+[use specified filesystem type]:filesystem type:(ext2 ext4 btrfs)' \
+'-b+[use specifed device as backing device]:device:_files -g "*(-%b,-/)"' \
 '-D+[use specifed number of devices for modprobe]:number of devices:(1)' \
 '-c+[chown to specified owner]:owner\:group:(nobody\:nogroup)' \
 '-m+[chmod to specified mode]:mode:(1777 755 770)' \
 '-o+[add specified mount options]:mount options:(noatime relatime strictatime)' \
 '-s+[use specified number of parallel streams]:stream number:(1 2)' \
+'-S+[use maximally specified megabytes uncomressed memory]:megabytes:(50 100 300 512 2048 4096 6144 8192 16384)' \
 '-a+[use specified compression algorithm]:compression algorithm:(lzo lz4)' \
 '-L+[use specified label]:label:(zram zswap)' \
 '-U+[use specified uuid]:uuid:(01234567-89ab-cdef-fedc-ba9876543210 fedcba98-7654-3210-0123-456789abcdef)' \
@@ -20,5 +22,5 @@ _arguments -s -S -A '-*' : \
 '*-M+[pass specified argument to mount]:mount arg:()' \
 '*-2+[pass specified argument to tune2fs]:tune2fs arg:()' \
 '*-Z+[pass specified argument to zramctl]:zramctl arg:()' \
-'1:size in megabytes:(50 150 512 1024 2048 4096 8192)' \
+'1:megabytes:(50 150 512 1024 2048 4096 8192)' \
 '2:directory:_files -/'

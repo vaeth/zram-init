@@ -33,9 +33,10 @@ should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
 To use `LZ4` compression with zram your kernel needs to be compiled with
-option:
+a corresponding options. Depending on your kernel version this might be
 
-`CONFIG_ZRAM_LZ4_COMPRESS=y`
+- `CONFIG_ZRAM_LZ4_COMPRESS=y` (for older kernels)
+- `CONFIG_CRYPTO_LZ4=y` (for recent kernels)
 
 For Gentoo, there is an ebuild in the main tree (older version)
 and in the mv overlay (current version).

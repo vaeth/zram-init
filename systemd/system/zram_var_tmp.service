@@ -1,8 +1,8 @@
 [Unit]
 Description=Mount /var/tmp as zram
+DefaultDependencies=no
 Conflicts=umount.target
-After=local-fs.target
-Before=umount.target display-manager.service
+Before=local-fs.target umount.target
 
 [Service]
 Type=oneshot
@@ -18,4 +18,4 @@ ExecStart=/sbin/zram-init -d2 -s2 -alz4 -text4 -orelatime -m1777 -Lvar_tmp_dir 2
 ExecStop=/sbin/zram-init -d2 0 /var/tmp
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=local-fs-pre.target

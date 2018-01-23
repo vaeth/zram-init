@@ -1,5 +1,11 @@
 # ChangeLog for zram-init:
 
+*zram-init-7.0_p1:
+	Pablo Cholaky <waltercool at slash.cl>:
+	- Fix zram_var_tmp.service to be analogous to zram_tmp.service
+	  due to conflicts with systemd-hostnamed PrivateTmp=yes, see
+	  https://github.com/vaeth/zram-init/pull/11
+
 *zram-init-7.0:
 	Martin Väth <martin at mvath.de>:
 	- Support discard also for swap

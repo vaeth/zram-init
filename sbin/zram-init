@@ -9,12 +9,20 @@ SysCtl() {
 	printf '%s' "$1" >|"$2"
 }
 
-Warning() {
+SysCtlN() {
+	printf '%s\n' "$1" >|"$2"
+}
+
+Error() {
 	Echo "${0##*/}: $*" >&2
 }
 
+Warning() {
+	Error "warning: $*" >&2
+}
+
 Fatal() {
-	Warning "$*"
+	Error "$*"
 	exit 1
 }
 
@@ -182,7 +190,7 @@ HotAdd() {
 			exec 3<&-
 		}
 		IsNumeric "$curradd" || {
-			Warning "warning: hot_add failed for $devnode"
+			Warning "hot_add failed for $devnode"
 			break
 		}
 		[ $curradd -lt $dev ] || break
@@ -233,7 +241,7 @@ then	if $swap
 			fi
 		fi
 		[ $status -eq 0 ] || \
-			Warning "warning: failed to reset zram$dev"
+			Warning "failed to reset zram$dev"
 	fi
 fi
 $umount && exit $status
@@ -247,16 +255,16 @@ then	eval "set -- a $zramctl_opt"
 		${algo:+--algorithm "$algo"} ${1+"$@"} \
 		-- "$devnode" || Fatal "zramctl zram$dev failed"
 else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" || \
-		Warning "warning: failed to set zram$dev max_comp_streams to $streams"
+		Warning "failed to set zram$dev max_comp_streams to $streams"
 	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
-		Warning "warning: failed to set zram$dev comp_algorithm to $algo"
+		Warning "failed to set zram$dev comp_algorithm to $algo"
 	[ -z "${backing_dev:++}" ] || \
-		Echo "$backing_dev" >| "$block/backing_dev" || \
-		Warning "warning: failed to set zram$dev backing_dev"
+		SysCtlN "$backing_dev" "$block/backing_dev" || \
+		Warning "failed to set zram$dev backing_dev"
 	SysCtl "$size" "$block/disksize" || Fatal "cannot set zram$dev size"
 fi
 [ -z "$mem_limit" ] || SysCtl "$mem_limit" "$block/mem_limit" || \
-	Warning "warning: failed to set zram$dev mem_limit"
+	Warning "failed to set zram$dev mem_limit"
 
 eval "set -- a $mkfs_opt"
 shift

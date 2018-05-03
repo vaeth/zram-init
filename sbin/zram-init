@@ -251,7 +251,7 @@ else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" || \
 	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
 		Warning "warning: failed to set zram$dev comp_algorithm to $algo"
 	[ -z "${backing_dev:++}" ] || \
-		SysCtl "$backing_dev" "$block/backing_dev" || \
+		Echo "$backing_dev" >| "$block/backing_dev" || \
 		Warning "warning: failed to set zram$dev backing_dev"
 	SysCtl "$size" "$block/disksize" || Fatal "cannot set zram$dev size"
 fi

@@ -1,5 +1,12 @@
 # ChangeLog for zram-init:
 
+*zram-init-7.1:
+	ko-zu:
+	- Fix missing newline for backing_dev
+
+	Martin Väth <martin at mvath.de>:
+	- Unify output functions
+
 *zram-init-7.0_p1:
 	Pablo Cholaky <waltercool at slash.cl>:
 	- Fix zram_var_tmp.service to be analogous to zram_tmp.service

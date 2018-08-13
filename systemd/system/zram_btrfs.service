@@ -14,7 +14,7 @@ RemainAfterExit=true
 # zram_swap.service, zram_var_tmp.service, zram_tmp.service, and
 # that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
 
-ExecStart=/sbin/zram-init -d1 -s2 -alz4 -tbtrfs -Lzbtrfs 2048 -
+ExecStart=/sbin/zram-init -d1 -s2 -azstd -tbtrfs -Lzbtrfs 2048 -
 ExecStop=/sbin/zram-init -d1 0 -
 
 [Install]

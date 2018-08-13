@@ -61,7 +61,7 @@ An empty argument means the same as if the option is not specified.
 -s NUM   Use up to NUM parallel compression streams for the device
 -S MAX   Use maximally MAX megabytes of uncompressed memory for the device
 -b DEV   Use DEV as backing device
--a ALGO  Set compression algorithm to ALGO (e.g. lz4 or lzo)
+-a ALGO  Set compression algorithm to ALGO (e.g. zstd, lz4, or lzo)
 -c OWNER If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.
          If not specified, the default owner (root:root) is not changed.
 -m MODE  If specified, chmod DIR to MODE after mounting.

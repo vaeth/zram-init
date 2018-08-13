@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-8.0:
+	Martin Väth <martin at mvath.de>:
+	- Support zstd (default, help text, zsh completion)
+
 *zram-init-7.1:
 	ko-zu:
 	- Fix missing newline for backing_dev

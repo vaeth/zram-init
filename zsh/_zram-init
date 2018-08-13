@@ -11,7 +11,7 @@ _arguments -s -S -A '-*' : \
 '-o+[add specified mount options]:mount options:(noatime relatime strictatime)' \
 '-s+[use specified number of parallel streams]:stream number:(1 2)' \
 '-S+[use maximally specified megabytes uncomressed memory]:megabytes:(50 100 300 512 2048 4096 6144 8192 16384)' \
-'-a+[use specified compression algorithm]:compression algorithm:(lzo lz4)' \
+'-a+[use specified compression algorithm]:compression algorithm:(lzo lz4 zstd)' \
 '-L+[use specified label]:label:(zram zswap)' \
 '-U+[use specified uuid]:uuid:(01234567-89ab-cdef-fedc-ba9876543210 fedcba98-7654-3210-0123-456789abcdef)' \
 '(-N)-i+[use specified bytes/inodes ratio]:inode ratio:(128 2048 4096 8192 32768 65536)' \

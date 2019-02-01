@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-8.1:
+	Florian Gamböck <mail at floga.de>:
+	- Correctly resolve args*
+
 *zram-init-8.0:
 	Martin Väth <martin at mvath.de>:
 	- Support zstd (default, help text, zsh completion)

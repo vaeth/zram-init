@@ -59,7 +59,7 @@ ZramIgnore() {
 		labl=\${labl$1-}
 		uuid=\${uuid$1-}
 		notr=\${notr$1-}
-		args=\${uuid$1-}"
+		args=\${args$1-}"
 	case $fstype in
 	swap|/*)
 		! [ "$size" -gt 0 ];;

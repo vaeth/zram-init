@@ -49,7 +49,7 @@ num_devices=2
 # swap - 500M
 type0=swap
 flag0= # The default "16383" is fine for us
-size0=512
+size0=`LC_ALL=C free -m | awk '/^Mem:/{print int($2/2)}'`
 mlim0= # no hard memory limit
 back0= # no backup device
 notr0= # keep the default on linux-3.15 or newer

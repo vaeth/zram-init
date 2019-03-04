@@ -1,5 +1,13 @@
 # ChangeLog for zram-init:
 
+*zram-init-8.2:
+	Martin Väth <martin at mvath.de>:
+	- Add defaults where half of memory is used for zram, see
+	  https://github.com/vaeth/zram-init/issues/16
+	  Thanks to Scott Edlund for the suggestion and code snippets.
+	- Log errors, see https://github.com/vaeth/zram-init/issues/14
+	  Thanks to Scott Edlund for the suggestion.
+
 *zram-init-8.1:
 	Florian Gamböck <mail at floga.de>:
 	- Correctly resolve args*

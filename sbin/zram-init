@@ -5,6 +5,16 @@ Echo() {
 	printf '%s\n' "$*"
 }
 
+if command -v logger
+then	EchoLog() {
+	Echo "$*"
+	logger "$*"
+}
+else	EchoLog() {
+	Echo "$*"
+}
+fi
+
 SysCtl() {
 	printf '%s' "$1" >|"$2"
 }
@@ -14,7 +24,7 @@ SysCtlN() {
 }
 
 Error() {
-	Echo "${0##*/}: $*" >&2
+	EchoLog "${0##*/}: $*" >&2
 }
 
 Warning() {

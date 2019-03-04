@@ -9,11 +9,12 @@ RemainAfterExit=true
 
 # Change the maximal number of parallel streams (-s), algorithm (-a) and
 # size (in megabytes) to your needs.
+# (In the example the size is half of the available ram.)
 # Make sure to avoid collision of devices (-d...) with
 # zram_tmp.service and zram_var_tmp.service and that
 # num_devices in modprobe.d/zram.conf contains the maximal used number + 1
 
-ExecStart=/sbin/zram-init -s2 -azstd -Lzram_swap 2048
+ExecStart=/bin/sh -c "exec /sbin/zram-init -s2 -azstd -Lzram_swap `LC_ALL=C free -m | awk '/^Mem:/{print int($2/2)}'`"
 ExecStop=/sbin/zram-init 0
 
 [Install]

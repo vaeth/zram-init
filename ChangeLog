@@ -1,6 +1,9 @@
 # ChangeLog for zram-init:
 
 *zram-init-8.2:
+	Edlund Scott <at sredlund>:
+	- Fix variable typos and shell style
+
 	Martin Väth <martin at mvath.de>:
 	- Add defaults where half of memory is used for zram, see
 	  https://github.com/vaeth/zram-init/issues/16

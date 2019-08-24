@@ -7,9 +7,10 @@ depend() {
 
 ZramInit() {
 	set -- ${1+"$@"} -D "$num_devices" \
-		${mlim:+-S "$mlim"} ${back:+-b "$back"} ${notr:+-T} \
+		${mlim:+-S "$mlim"} ${back:+-b "$back"} \
+		${icmp:+-I} ${idle:+-w} ${wlim:+-W "$wlim"} \
 		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} \
-		${labl:+-L "$labl"} ${uuid:+-U "$uuid"}
+		${labl:+-L "$labl"} ${uuid:+-U "$uuid"} ${notr:+-T}
 	[ -z "${args:++}" ] || eval 'set -- "$@" '"$args"
 	if [ x"$fstype" = x'swap' ]
 	then	einfo "Swap->zram$2"
@@ -50,6 +51,9 @@ ZramIgnore() {
 		size=\${size$1:-0}
 		mlim=\${mlim$1}
 		back=\${back$1}
+		icmp=\${icmp$1}
+		idle=\${idle$1}
+		wlim=\${wlim$1}
 		maxs=\${maxs$1-}
 		algo=\${algo$1-}
 		flag=\${flag$1-}

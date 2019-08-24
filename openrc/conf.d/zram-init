@@ -16,6 +16,11 @@ num_devices=2
 # size0, size1, ... are the variables for the sizes (in MB)
 # mlim0, mlim1, ... are the variables for the maximal uncompressed memory (MB)
 # back0, back1, ... are the variables for the backup device
+# icmp0, icmp1, ... are the flags (if nonempty) for writing incompressible
+#                   pages to the backup device (requires setting back*)
+# idle0, idle1, ... are the flags (in nonempty) for writing idle pages to the
+#                   backup device (requires setting back*)
+# wlim0, wlim1, ... set the writeback_limit for idle pages (implies idle*)
 # maxs0, maxs1, ... are the variables for the maximal (parallel) streams
 # algo0, algo1, ... are the variables for the compression algorithms
 # flag0, flag1, ... are the variables for the flags
@@ -52,6 +57,9 @@ flag0= # The default "16383" is fine for us
 size0=`LC_ALL=C free -m | awk '/^Mem:/{print int($2/2)}'`
 mlim0= # no hard memory limit
 back0= # no backup device
+icmp0= # no incompressible page writing to backup device
+idle0= # no idle page writing to backup device
+wlim0= # no writeback_limit for idle page writing for backup device
 notr0= # keep the default on linux-3.15 or newer
 maxs0=1 # maximum number of parallel processes for this device
 algo0=zstd # zstd (since linux-4.18), lz4 (since linux-3.15), or lzo.
@@ -69,6 +77,9 @@ flag1=ext4
 size1=2048
 mlim1= # no hard memory limit
 back1= # no backup device
+icmp1= # no incompressible page writing to backup device
+idle1= # no idle page writing to backup device
+wlim1= # no writeback_limit for idle page writing for backup device
 opts1="strictatime,nosuid,nodev,noexec" # e.g. "relatime" or "noatime" are also reasonable choices
 mode1=1777
 owgr1= # No reason to change the default "root:root"
@@ -85,6 +96,9 @@ flag2=ext2
 size2=1024
 mlim2= # no hard memory limit
 back2= # no backup device
+icmp2= # no incompressible page writing to backup device
+idle2= # no idle page writing to backup device
+wlim2= # no writeback_limit for idle page writing for backup device
 opts2=relatime # e.g. "noatime" or "strictatime" are also reasonable choices
 mode2=1777
 owgr2= # No reason to change the default "root:root"

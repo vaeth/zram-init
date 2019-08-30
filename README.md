@@ -33,6 +33,7 @@ should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
 To install on Arch based distribution do :
+
     `git clone https://github.com/vaeth/zram-init.git`
     `cd zram-init`
     `makepkg --install`

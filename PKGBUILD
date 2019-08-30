@@ -19,7 +19,7 @@ source=("zramctrl"
 #         '')
 
 package() {
-  install -Dm755 sbin/zram-init $pkgdir/sbin/zram-init
+  install -Dm755 sbin/zram-init $pkgdir/usr/bin/zram-init
   install -Dm644 modprobe.d/zram.conf $pkgdir/modprobe.d/zram.conf
   install -Dm644 systemd/system/zram_swap.service $pkgdir/usr/lib/systemd/system/zram_swap.service
   install -Dm644 systemd/system/zram_tmp.service $pkgdir/usr/lib/systemd/system/zram_tmp.service

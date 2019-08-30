@@ -32,11 +32,9 @@ For systemd and optionally also for openrc the content of `modprobe.d`
 should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
-To install on Arch based distribution do :
+To install on Arch based distribution : install `zram-init-git` from AUR
 
-    `git clone https://github.com/vaeth/zram-init.git`
-    `cd zram-init`
-    `makepkg --install`
+    Once installed, configure :
     `sudo cp /usr/lib/systemd/system/zram* /etc/systemd/system/`
     
     - Lets make your configuration tweaks in

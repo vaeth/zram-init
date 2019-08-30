@@ -9,13 +9,7 @@ arch=('any')
 url="http://en.wikipedia.org/wiki/ZRam"
 license=('GPL')
 depends=('bash')
-backup=("modprobe.d/zram.conf")
-source=("sbin/zram-init"
-        "modprobe.d/zram.conf"
-        "systemd/system/zram_swap.service"
-        "systemd/system/zram_tmp.service"
-        "systemd/system/zram_var_tmp.service"
-        )
+#backup=("modprobe.d/zram.conf")
 source=(
 	"$pkgname::git+https://github.com/vaeth/zram-init.git#branch=master"
 )

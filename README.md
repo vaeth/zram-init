@@ -32,6 +32,29 @@ For systemd and optionally also for openrc the content of `modprobe.d`
 should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
+To install on Arch based distribution : install `zram-init-git` from AUR
+
+    Once installed, configure :
+    `sudo cp /usr/lib/systemd/system/zram* /etc/systemd/system/`
+    
+    - Lets make your configuration tweaks in
+        `/etc/modprobe.d/zram.conf`
+        `/etc/systemd/system/zram_swap.service`
+        `/etc/systemd/system/zram_tmp.service`
+        `/etc/systemd/system/zram_var_tmp.service`
+
+    - start
+        `sudo systemctl start zram_swap.service`
+        `sudo systemctl start zram_tmp.service`
+        `sudo systemctl start zram_var_tmp.service`
+
+    - and finaly enable
+        `sudo systemctl enable zram_swap.service`
+        `sudo systemctl enable zram_tmp.service`
+        `sudo systemctl enable zram_var_tmp.service`
+
+    Optional remove any swap references in `/etc/fstab`
+
 To use `LZ4` compression with zram your kernel needs to be compiled with
 a corresponding options. Depending on your kernel version this might be
 

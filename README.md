@@ -2,13 +2,15 @@
 
 A wrapper script for the zram kernel module with interactive and init support
 
-(C) Martin Väth (martin at mvath.de).
+(C) Martin Väth (mvath at google.com).
 Many thanks to all people in the `AUTHORS` file for contributing.
 The license of this package is the GNU Public License GPL-2.
 
 This is a small helper script to setup a zram device as swap or as a ramdisk.
 Also a __zsh completion__ file and __openrc__ and __systemd__ init-scripts
 are provided.
+
+## General instructions
 
 If `zramctl` (from __>=util-linux-2.26__) is available,
 this is used by default.
@@ -32,35 +34,52 @@ For systemd and optionally also for openrc the content of `modprobe.d`
 should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
-To install on Arch based distribution : install `zram-init-git` from AUR
-
-    Once installed, configure :
-    `sudo cp /usr/lib/systemd/system/zram* /etc/systemd/system/`
-    
-    - Lets make your configuration tweaks in
-        `/etc/modprobe.d/zram.conf`
-        `/etc/systemd/system/zram_swap.service`
-        `/etc/systemd/system/zram_tmp.service`
-        `/etc/systemd/system/zram_var_tmp.service`
-
-    - start
-        `sudo systemctl start zram_swap.service`
-        `sudo systemctl start zram_tmp.service`
-        `sudo systemctl start zram_var_tmp.service`
-
-    - and finaly enable
-        `sudo systemctl enable zram_swap.service`
-        `sudo systemctl enable zram_tmp.service`
-        `sudo systemctl enable zram_var_tmp.service`
-
-    Optional remove any swap references in `/etc/fstab`
-
 To use `LZ4` compression with zram your kernel needs to be compiled with
 a corresponding options. Depending on your kernel version this might be
 
 - `CONFIG_ZRAM_LZ4_COMPRESS=y` (for older kernels)
 - `CONFIG_CRYPTO_LZ4=y` (for recent kernels)
 
-For Gentoo, there is an ebuild in the main tree (older version)
+## Instructions for specific distributions
+
+### Gentoo based
+
+There is an ebuild in the main gentoo tree (usually an older version)
 and in the mv overlay (current version).
-For Alpine Linux, a __zram-init__ package is available.
+
+### Alpine Linux
+
+A __zram-init__ package is available.
+
+### Arch based
+
+To install on Arch based distribution: install `zram-init-git` from AUR
+
+Once installed, configure:
+```
+sudo cp /usr/lib/systemd/system/zram* /etc/systemd/system/
+```
+
+- Lets make your configuration tweaks in
+  ```
+    /etc/modprobe.d/zram.conf
+    /etc/systemd/system/zram_swap.service
+    /etc/systemd/system/zram_tmp.service
+    /etc/systemd/system/zram_var_tmp.service
+  ```
+
+- start
+  ```
+    sudo systemctl start zram_swap.service
+    sudo systemctl start zram_tmp.service
+    sudo systemctl start zram_var_tmp.service
+  ```
+
+- and finaly enable
+  ```
+    sudo systemctl enable zram_swap.service
+    sudo systemctl enable zram_tmp.service
+    sudo systemctl enable zram_var_tmp.service
+  ```
+
+Optional remove any swap references in `/etc/fstab`

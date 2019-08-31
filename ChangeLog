@@ -1,7 +1,7 @@
 # ChangeLog for zram-init:
 
 *zram-init-9.0:
-	Martin Väth <martin at mvath.de>:
+	Martin Väth <mvaeth at google.com>:
 	- Support writeback of incompressible/idle pages and writeback_limit
 	- Finally suppress the annoying output of the logger path
 

@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-9.1:
+	xdch57:
+	- manpage
+
 *zram-init-9.0:
 	Martin Väth <mvaeth at google.com>:
 	- Support writeback of incompressible/idle pages and writeback_limit

@@ -1,0 +1,135 @@
+.TH ZRAM-INIT "8" "January 2020" "zram-init" "System Administration"
+.\" {{{ SEE ALSO
+.SH "NAME"
+\fBzram-init\fR \- Scripts to support compressed swap devices or ramdisks with zram
+.\" }}}
+
+.\" {{{ SYNOPSIS
+.SH "SYNOPSIS"
+.B zram-init
+[\fI\,options\/\fR] \fI\,SIZE\fR|\fIwrite \/\fR[\fI\,DIR\/\fR]
+.\" }}}
+
+.\" {{{ DESCRIPTION
+.SH "DESCRIPTION"
+Prepare a zram device and use it as swap (resp. mount it under \fIDIR\fR).
+.br
+\fISIZE\fR is the maximal size in megabytes. For umounting/freeing the zram device, use \fISIZE=0\fR.
+.br
+When using \fIwrite\fR (or anything else starting with \fIw\fR) an idle writeback is forced (only makes sense if previously initialized with \fB-w\fR or \fB-W\fR \fILIMIT\fR).
+.sp
+If \fIDIR\fR is \- then only a filesystem is created in /dev/zram\fIDEV\fR (or the device
+is removed if \fISIZE\fR is 0), but it is not mounted (options \fB\-o\fR \fB\-c\fR \fB\-m\fR \fB\-T\fR take no effect in this case, of course).
+.br
+The latter can be useful e.g. for btrfs if multiple devices should be mounted
+jointly afterwards.
+.br
+.\" }}}
+
+.\" {{{ OPTIONS
+.SH "OPTIONS"
+An empty argument means the same as if the option is not specified.
+.TP
+.BR "\-d " \fIDEV
+Use zram device /dev/zram\fIDEV\fR. Default is 0 (/dev/zram0).
+.TP
+.BR "-D " \fINUM
+If modprobe needs to be used, require \fINUM\fR devices.
+.br
+This is not recommended. Rely instead on \fI\,/etc/modprobe.d/zram.conf\/\fP with the line options zram num_devices=\fINUM\fR.
+.TP
+.BR "\-s " \fINUM
+Use up to \fINUM\fR parallel compression streams for the device.
+.TP
+.BR "\-S " \fIMAX
+Use maximally \fIMAX\fR megabytes of uncompressed memory for the device.
+.TP
+.BR "\-b " \fIDEV
+Use \fIDEV\fR as backing device.
+.TP
+.BR \-I
+If combined with \fB\-b\fR \fIDEV\fR, store incompressible pages to backing device.
+.TP
+.BR \-w
+If combined with \fB-b\fR \fIDEV\fR, enable idle writeback to backing device.
+.TP
+.BR "\-W " \fILIMIT
+As \fB-w\fR but additionally set writeback_limit to \fILIMIT\fR * 4kB.
+.TP
+.BR "\-a 842" | deflate | lz4 | lz4hc | lzo | zstd
+Set the compression algorithm to be used for compressing data in the zram device.
+.TP
+.BR "\-c " \fIOWNER
+Chown to \fIOWNER\fR (resp. \fIOWNER:GROUP\fR) after mounting.
+.TP
+.BR "\-m " \fIMODE
+Chmod \fIDIR\fR to \fIMODE\fR after mounting.
+.TP
+.BR "\-o " \fIOPTS
+Mount \fIDIR\fR with \fB\-o\fR \fIOPTS\fR.
+.TP
+.BR "\-p " \fIPRIO
+Use priority \fIPRIO\fR for the swap device. Default is 16383.
+.br
+Use \fIPRIO=\-\fR if you want to keep the default priority (-1).
+.TP
+.BR "\-t ext2" | ext4 | btrfs
+Set the filesystem type if \fIDIR\fR is specified. Default is \fBext4\fR.
+.TP
+.BR "\-i " \fIIRATIO
+Override default bytes/inodes in fs (ext2, ext4).
+.TP
+.BR "\-N " \fIINODES
+Override inode count (ext2, ext4).
+.TP
+.BR "\-L " \fILABEL
+Specify the label \fILABEL\fR for the new filesystem.
+.TP
+.BR "\-U " \fIUUID
+Specify the uuid \fIUUID\fR for the new filesystem.
+.TP
+.B \-T
+Do not use the discard (TRIM) feature of ext4/swap.
+.TP
+.BR "\-K " \fIARG
+Pass \fIARG\fR to the respective mkswap or mkfs.* call.
+.TP
+.BR "\-M " \fIARG
+Pass \fIARG\fR to the respective swapon/mount call.
+.TP
+.BR "\-2 " \fIARG
+Pass \fIARG\fR to the tune2fs call (ignored unless for ext2 or ext4).
+.TP
+.BR "\-Z " \fIARG
+Pass \fIARG\fR to the zramctl call
+.P
+Use the following options with linux\-3.14 or earlier or when you want a slight
+speed increase at the cost of possibly wasting a lot of memory.
+.P
+.TP
+.BR \-l
+Do not use zramctl even if available.
+.TP
+.BR \-k
+Do no attempt to umount/free a previously used zram under this device.
+.\" }}}
+
+.\" {{{ AUTHORS
+.SH "AUTHORS"
+.LP
+Martin V\(:ath <martin at mvath.de> (developer, current maintainer)
+.\" }}}
+
+.\" {{{ SEE ALSO
+.SH "SEE ALSO"
+.BR zramctl (8),
+.BR mkswap (8),
+.BR mke2fs (8),
+.BR mkfs.btrfs (8)
+.sp
+The zram-init homepage
+.UR https://github.\:com\:/vaeth\:/zram-init
+.UE " provides further information and links."
+.\" }}}
+
+.\" vim:set tw=90 expandtab foldenable foldmethod=marker foldlevel=0 :

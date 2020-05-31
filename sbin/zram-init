@@ -85,7 +85,7 @@ An empty argument means the same as if the option is not specified.
          If not specified, PRIO=16383 is assumed.
          Use PRIO=- if you want to keep the default priority (-1).
 -t TYPE  Use a filesystem of type TYPE if DIR is specified.
-         TYPE can be either ext2, ext4, or btrfs
+         TYPE can be either ext2, ext4, btrfs or xfs
          If not specified, TYPE=ext4 is assumed.
 -i IRATIO If specified override default bytes/inodes in fs (ext2, ext4)
 -N INODES If specified override inode count (ext2, ext4)
@@ -371,6 +371,15 @@ btrfs)
 	eval "set -- a $mount_opt"
 	shift
 	mount -t btrfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+		|| Fatal "mount $devnode failed";;
+xfs)
+	mkfs.xfs ${label:+-L "$label"} ${uuid:+-m uuid="$uuid"} \
+		${1+"$@"} -- "$devnode" >/dev/null \
+		|| Fatal "mkfs.xfs $devnode failed"
+	$mount || exit 0
+	eval "set -- a $mount_opt"
+	shift
+	mount -t xfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
 		|| Fatal "mount $devnode failed";;
 *)
 	Fatal "unsupported filesystem $fstype";;

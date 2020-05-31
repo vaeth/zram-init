@@ -1,0 +1,235 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Martin V"ath <martin@mvath.de>
+# This file is distributed under the same license as the zram-init package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: zram-init 9.1\n"
+"Report-Msgid-Bugs-To: Martin V\"ath <martin@mvath.de>\n"
+"POT-Creation-Date: 2020-05-31 15:21+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: sbin/zram-init.in:71
+#, no-sh-format
+msgid "push.sh from https://github.com/vaeth/push (v2.0 or newer) required"
+msgstr ""
+
+#: sbin/zram-init.in:85
+#, sh-format
+msgid "Usage: ${BASENAME} [options] SIZE|write [DIR]"
+msgstr ""
+
+#: sbin/zram-init.in:86
+#, no-sh-format
+msgid ""
+"Prepare a zram device and use it as swap (resp. mount it under DIR).\n"
+"SIZE is the maximal size in megabytes.\n"
+"For umounting/freeing the zram device, use SIZE=0.\n"
+"When using \"write\" (or anything else starting with \"w\") an idle writeback\n"
+"is forced (only makes sense if previously initialized with -w or -W LIMIT).\n"
+"If DIR is - then only a filesystem is created in /dev/zram$DEV (or the device\n"
+"is removed if SIZE is 0) but it is not mounted\n"
+"(options -o -c -m -T take no effect in this case, of course).\n"
+"The latter can be useful e.g. for btrfs if multiple devices should be mounted\n"
+"jointly afterwards.\n"
+"The following options are available.\n"
+"An empty argument means the same as if the option is not specified.\n"
+"-d DEV     Use zram device DEV. If not specified, DEV=0 is assumed.\n"
+"           Make sure to use the matching value for umounting (SIZE=0)!\n"
+"-D NUM     If modprobe needs to be used, require NUM devices. This is not\n"
+"           recommended. Rely instead on /etc/modprobe.d/zram.conf with the line\n"
+"           options zram num_devices=NUM\n"
+"-s NUM     Use up to NUM parallel compression streams for the device\n"
+"-S MAX     Use maximally MAX megabytes of uncompressed memory for the device\n"
+"-b DEV     Use DEV as backing device\n"
+"-I         If combined with -b DEV, store incompressible pages to backing device\n"
+"-w         If combined with -b DEV, enable idle writeback to backing device\n"
+"-W LIMIT   As -w but additionally set writeback_limit to LIMIT * 4kB.\n"
+"-a ALGO    Set compression algorithm to ALGO (e.g. zstd, lz4, or lzo)\n"
+"-c OWNER   If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.\n"
+"           If not specified, the default owner (root:root) is not changed.\n"
+"-m MODE    If specified, chmod DIR to MODE after mounting.\n"
+"-o OPTS    If specified, mount DIR with -o OPTS.\n"
+"-p PRIO    Use priority PRIO for the swap device.\n"
+"           If not specified, PRIO=16383 is assumed.\n"
+"           Use PRIO=- if you want to keep the default priority (-1).\n"
+"-t TYPE    Use a filesystem of type TYPE if DIR is specified.\n"
+"           TYPE can be either ext2, ext4, btrfs or xfs\n"
+"           If not specified, TYPE=ext4 is assumed.\n"
+"-i IRATIO  If specified override default bytes/inodes in fs (ext2, ext4)\n"
+"-N INODES  If specified override inode count (ext2, ext4)\n"
+"-L LABEL   Specify the label LABEL for the new filesystem\n"
+"-U UUID    Specify the uuid UUID for the new filesystem\n"
+"-T         If specified, do not use the discard (TRIM) feature of ext4/swap.\n"
+"           Use this option with linux-3.14 or earlier or when you want a slight\n"
+"           speed increase at the cost of possibly wasting a lot of memory\n"
+"-l         Do not use zramctl even if available\n"
+"-k         Do no attempt to umount/free a previously used zram under this device\n"
+"\n"
+"If you have push.sh in $PATH, you can also use accumulatively:\n"
+"-K ARG   Pass ARG to the respective mkswap or mkfs.* call\n"
+"-M ARG   Pass ARG to the respective swapon/mount call\n"
+"-2 ARG   Pass ARG to the tune2fs call (ignored unless for ext2 or ext4)\n"
+"-Z ARG   Pass ARG to the zramctl call\n"
+"\n"
+"Call with LANG=C to disable translations"
+msgstr ""
+
+#: sbin/zram-init.in:209
+#, sh-format
+msgid "device $dev is not numeric"
+msgstr ""
+
+#: sbin/zram-init.in:220
+#, sh-format
+msgid "failed to idle writeback zram$dev"
+msgstr ""
+
+#: sbin/zram-init.in:224
+#, sh-format
+msgid "size $size is not numeric"
+msgstr ""
+
+#: sbin/zram-init.in:225
+#, sh-format
+msgid "mem_limit $mem_limit is not numeric"
+msgstr ""
+
+#: sbin/zram-init.in:227
+#, sh-format
+msgid "writeback_limit $writeback_limit is not numeric"
+msgstr ""
+
+#: sbin/zram-init.in:233
+#, no-sh-format
+msgid "failed to calculate size"
+msgstr ""
+
+#: sbin/zram-init.in:261
+#, sh-format
+msgid "hot_add failed for $devnode"
+msgstr ""
+
+#: sbin/zram-init.in:270
+#, sh-format
+msgid "failed to create $devnode"
+msgstr ""
+
+#: sbin/zram-init.in:276
+#, sh-format
+msgid "device count $num is not numeric"
+msgstr ""
+
+#: sbin/zram-init.in:283
+#, sh-format
+msgid "cannot create $devnode: $zclass missing"
+msgstr ""
+
+#: sbin/zram-init.in:291
+#, sh-format
+msgid "cannot find $block"
+msgstr ""
+
+#: sbin/zram-init.in:311
+#, sh-format
+msgid "failed to reset zram$dev"
+msgstr ""
+
+#: sbin/zram-init.in:324
+#, sh-format
+msgid "zramctl zram$dev failed"
+msgstr ""
+
+#: sbin/zram-init.in:326
+#, sh-format
+msgid "failed to set zram$dev max_comp_streams to $streams"
+msgstr ""
+
+#: sbin/zram-init.in:328
+#, sh-format
+msgid "failed to set zram$dev comp_algorithm to $algo"
+msgstr ""
+
+#: sbin/zram-init.in:331
+#, sh-format
+msgid "failed to set zram$dev backing_dev"
+msgstr ""
+
+#: sbin/zram-init.in:333
+#, sh-format
+msgid "failed to set zram$dev incompressible writeback"
+msgstr ""
+
+#: sbin/zram-init.in:336
+#, sh-format
+msgid "failed to set zram$dev idle writeback"
+msgstr ""
+
+#: sbin/zram-init.in:341
+#, sh-format
+msgid "failed to enable writeback_limit for zram$dev"
+msgstr ""
+
+#: sbin/zram-init.in:345
+#, sh-format
+msgid "failed to set writeback_limit $writeback_limit for zram$dev"
+msgstr ""
+
+#: sbin/zram-init.in:348
+#, sh-format
+msgid "cannot set zram$dev size"
+msgstr ""
+
+#: sbin/zram-init.in:351
+#, sh-format
+msgid "failed to set zram$dev mem_limit"
+msgstr ""
+
+#: sbin/zram-init.in:358
+#, sh-format
+msgid "mkswap $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:363
+#, sh-format
+msgid "swapon $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:374
+#, sh-format
+msgid "mkfs.ext2 $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:382 sbin/zram-init.in:398 sbin/zram-init.in:408
+#: sbin/zram-init.in:417
+#, sh-format
+msgid "mount $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:389
+#, sh-format
+msgid "mkfs.ext4 $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:403
+#, sh-format
+msgid "mkfs.btrfs $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:412
+#, sh-format
+msgid "mkfs.xfs $devnode failed"
+msgstr ""
+
+#: sbin/zram-init.in:419
+#, sh-format
+msgid "unsupported filesystem $fstype"
+msgstr ""

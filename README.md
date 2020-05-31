@@ -42,6 +42,15 @@ a corresponding options. Depending on your kernel version this might be
 
 ## Instructions for specific distributions
 
+### General
+
+To install this script, you should use:
+
+```
+make install
+make PREFIX=/usr install  # /usr instead of /usr/local
+```
+
 ### Gentoo based
 
 There is an ebuild in the main gentoo tree (usually an older version)

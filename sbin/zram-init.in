@@ -3,18 +3,18 @@
 
 source gettext.sh
 
-readonly TEXTDOMAINDIR="@MODIR@"
-readonly TEXTDOMAIN="@EXENAME@"
+export TEXTDOMAINDIR="@MODIR@"
+export TEXTDOMAIN="@EXENAME@"
 
 readonly BASENAME="${0##*/}"
 
 set -u
 Echo() {
-	printf '%s\n' "$(gettext "$*")"
+	printf '%s' "$(gettext "$*")"
 }
 
 xEcho() {
-	printf '%s\n' "$(eval_gettext "$*")"
+	printf '%s' "$(eval_gettext "$*")"
 }
 
 if command -v logger >/dev/null 2>&1
@@ -45,15 +45,19 @@ SysCtlN() {
 }
 
 Error() {
-	EchoLog "${BASENAME}: $*" >&2
+	EchoLog "${BASENAME}: " >&2
+	EchoLog "$*" >&2
 }
 
 xError() {
-	xEchoLog "${BASENAME}: $*" >&2
+	xEchoLog "${BASENAME}: " >&2
+	xEchoLog "$*" >&2
+	echo >&2
 }
 
 xWarning() {
-	xError "Warning: $*" >&2
+	xError "Warning: "
+	xError "$*"
 }
 
 Fatal() {
@@ -68,7 +72,7 @@ xFatal() {
 
 Push() {
 	PushA_=`push.sh 2>/dev/null` || Fatal \
-'push.sh from https://github.com/vaeth/push (v2.0 or newer) required'
+'push.sh from https://github.com/vaeth/push/ (v2.0 or newer) required'
 	eval "$PushA_"
 	Push "$@"
 }
@@ -82,35 +86,35 @@ IsNumeric() {
 }
 
 Usage() {
-	xEcho 'Usage: ${BASENAME} [options] SIZE|write [DIR]'
-	Echo 'Prepare a zram device and use it as swap (resp. mount it under DIR).
+	xEcho 'Usage: ${BASENAME} [options] SIZE|write [DIR]'; echo
+	Echo 'Prepare a zRAM device and use it as swap (resp. mount it under DIR).
 SIZE is the maximal size in megabytes.
-For umounting/freeing the zram device, use SIZE=0.
+For umounting/freeing the zRAM device, use SIZE=0.
 When using "write" (or anything else starting with "w") an idle writeback
-is forced (only makes sense if previously initialized with -w or -W LIMIT).
+is forced (only makes sense if previously initialized with "-w" or "-W LIMIT").
 If DIR is - then only a filesystem is created in /dev/zram$DEV (or the device
 is removed if SIZE is 0) but it is not mounted
-(options -o -c -m -T take no effect in this case, of course).
-The latter can be useful e.g. for btrfs if multiple devices should be mounted
+(options "-o", "-c", "-m", and "-T" take no effect in this case, of course).
+The latter can be useful e.g. for Btrfs if multiple devices should be mounted
 jointly afterwards.
 The following options are available.
 An empty argument means the same as if the option is not specified.
--d DEV     Use zram device DEV. If not specified, DEV=0 is assumed.
+-d DEV     Use zRAM device DEV. If not specified, DEV=0 is assumed.
            Make sure to use the matching value for umounting (SIZE=0)!
 -D NUM     If modprobe needs to be used, require NUM devices. This is not
            recommended. Rely instead on /etc/modprobe.d/zram.conf with the line
-           options zram num_devices=NUM
+           "options zram num_devices=NUM"
 -s NUM     Use up to NUM parallel compression streams for the device
 -S MAX     Use maximally MAX megabytes of uncompressed memory for the device
 -b DEV     Use DEV as backing device
--I         If combined with -b DEV, store incompressible pages to backing device
--w         If combined with -b DEV, enable idle writeback to backing device
--W LIMIT   As -w but additionally set writeback_limit to LIMIT * 4kB.
+-I         If combined with "-b DEV", store incompressible pages to backing device
+-w         If combined with "-b DEV", enable idle writeback to backing device
+-W LIMIT   As "-w" but additionally set writeback_limit to LIMIT * 4kB.
 -a ALGO    Set compression algorithm to ALGO (e.g. zstd, lz4, or lzo)
 -c OWNER   If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.
            If not specified, the default owner (root:root) is not changed.
 -m MODE    If specified, chmod DIR to MODE after mounting.
--o OPTS    If specified, mount DIR with -o OPTS.
+-o OPTS    If specified, mount DIR with "-o OPTS".
 -p PRIO    Use priority PRIO for the swap device.
            If not specified, PRIO=16383 is assumed.
            Use PRIO=- if you want to keep the default priority (-1).
@@ -125,15 +129,15 @@ An empty argument means the same as if the option is not specified.
            Use this option with linux-3.14 or earlier or when you want a slight
            speed increase at the cost of possibly wasting a lot of memory
 -l         Do not use zramctl even if available
--k         Do no attempt to umount/free a previously used zram under this device
+-k         Do no attempt to umount/free a previously used zRAM under this device
 
 If you have push.sh in $PATH, you can also use accumulatively:
--K ARG   Pass ARG to the respective mkswap or mkfs.* call
--M ARG   Pass ARG to the respective swapon/mount call
--2 ARG   Pass ARG to the tune2fs call (ignored unless for ext2 or ext4)
--Z ARG   Pass ARG to the zramctl call
+-K ARG     Pass ARG to the respective mkswap or mkfs.* call
+-M ARG     Pass ARG to the respective swapon/mount call
+-2 ARG     Pass ARG to the tune2fs call (ignored unless for ext2 or ext4)
+-Z ARG     Pass ARG to the zramctl call
 
-Call with LANG=C to disable translations'
+Call with LANG=C to disable translations'; echo
 	exit ${1:-1}
 }
 

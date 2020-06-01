@@ -47,7 +47,7 @@ a corresponding options. Depending on your kernel version this might be
 To install this script, you should use:
 
 ```
-make install
+make install # for installation to /usr/local
 make PREFIX=/usr install  # /usr instead of /usr/local
 ```
 

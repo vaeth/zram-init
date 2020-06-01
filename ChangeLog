@@ -1,11 +1,20 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.0:
+	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
+	- XFS support
+	- i18n support
+	- French translation
+
+	Martin Väth <martin at mvath.de>:
+	- German translation
+
 *zram-init-9.1:
 	xdch57:
 	- manpage
 
 *zram-init-9.0:
-	Martin Väth <mvaeth at google.com>:
+	Martin Väth <martin at mvath.de>:
 	- Support writeback of incompressible/idle pages and writeback_limit
 	- Finally suppress the annoying output of the logger path
 

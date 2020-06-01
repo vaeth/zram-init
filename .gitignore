@@ -1,0 +1,9 @@
+*.asc
+*.gz
+*.tar
+*.xz
+*.zip
+sbin/zram-init
+i18n/*.mo
+i18n/*.po~
+i18n/*.pot

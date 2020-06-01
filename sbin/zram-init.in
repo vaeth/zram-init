@@ -1,20 +1,49 @@
 #!/usr/bin/env sh
 # (C) Martin V\"ath <martin@mvath.de>
 
-source gettext.sh
-
-export TEXTDOMAINDIR="@MODIR@"
-export TEXTDOMAIN="@EXENAME@"
-
-readonly BASENAME="${0##*/}"
-
 set -u
-Echo() {
-	printf '%s' "$(gettext "$*")"
-}
 
+BASENAME=${0##*/}
+
+if command -v gettext.sh >/dev/null 2>&1
+then
+. gettext.sh
+TEXTDOMAINDIR='@MODIR@'
+TEXTDOMAIN='@EXENAME@'
+export TEXTDOMAINDIR TEXTDOMAIN
+Echo() {
+	gettext "$*"
+	echo
+}
+else
+Echo() {
+	printf '%s\n' "$*"
+}
+gtx_varopen='${'
+gtx_varclose='}'
+eval_gettext() {
+	gtx_a=$*
+	gtx_b=
+	while gtx_c=${gtx_a%%"$gtx_varopen"*}
+	do	gtx_b=$gtx_b$gtx_c
+		[ x"$gtx_c" = x"$gtx_a" ] && break
+		gtx_a=${gtx_a#*"$gtx_varopen"}
+		gtx_c=${gtx_a%%"$gtx_varclose"*}
+		case $gtx_c in
+		"$gtx_a"|*[!a-zA-Z0-9_]*)
+			gtx_b=$gtx_b$gtx_varopen
+			continue;;
+		esac
+		eval gtx_b=\$gtx_b\$$gtx_c
+		gtx_a=${gtx_a#*"$gtx_varclose"}
+	done
+	printf '%s' "$gtx_b"
+	unset gtx_a gtx_b gtx_c
+}
+fi
 xEcho() {
-	printf '%s' "$(eval_gettext "$*")"
+	eval_gettext "$*"
+	echo
 }
 
 if command -v logger >/dev/null 2>&1
@@ -22,16 +51,14 @@ then	EchoLog() {
 	Echo "$*"
 	logger "$*"
 }
-
-		xEchoLog() {
+xEchoLog() {
 	xEcho "$*"
 	logger "$*"
 }
 else	EchoLog() {
 	Echo "$*"
 }
-
-		xEchoLog() {
+xEchoLog() {
 	xEcho "$*"
 }
 fi
@@ -52,7 +79,6 @@ Error() {
 xError() {
 	xEchoLog "${BASENAME}: " >&2
 	xEchoLog "$*" >&2
-	echo >&2
 }
 
 xWarning() {
@@ -86,8 +112,9 @@ IsNumeric() {
 }
 
 Usage() {
-	xEcho 'Usage: ${BASENAME} [options] SIZE|write [DIR]'; echo
-	Echo 'Prepare a zRAM device and use it as swap (resp. mount it under DIR).
+	xEcho 'Usage: ${BASENAME} [options] SIZE|write [DIR]'
+	Echo \
+'Prepare a zRAM device and use it as swap (resp. mount it under DIR).
 SIZE is the maximal size in megabytes.
 For umounting/freeing the zRAM device, use SIZE=0.
 When using "write" (or anything else starting with "w") an idle writeback
@@ -107,7 +134,8 @@ An empty argument means the same as if the option is not specified.
 -s NUM     Use up to NUM parallel compression streams for the device
 -S MAX     Use maximally MAX megabytes of uncompressed memory for the device
 -b DEV     Use DEV as backing device
--I         If combined with "-b DEV", store incompressible pages to backing device
+-I         If combined with "-b DEV", store incompressible pages to
+           backing device
 -w         If combined with "-b DEV", enable idle writeback to backing device
 -W LIMIT   As "-w" but additionally set writeback_limit to LIMIT * 4kB.
 -a ALGO    Set compression algorithm to ALGO (e.g. zstd, lz4, or lzo)
@@ -129,7 +157,8 @@ An empty argument means the same as if the option is not specified.
            Use this option with linux-3.14 or earlier or when you want a slight
            speed increase at the cost of possibly wasting a lot of memory
 -l         Do not use zramctl even if available
--k         Do no attempt to umount/free a previously used zRAM under this device
+-k         Do no attempt to umount/free a previously used zRAM under this
+           device
 
 If you have push.sh in $PATH, you can also use accumulatively:
 -K ARG     Pass ARG to the respective mkswap or mkfs.* call
@@ -137,7 +166,7 @@ If you have push.sh in $PATH, you can also use accumulatively:
 -2 ARG     Pass ARG to the tune2fs call (ignored unless for ext2 or ext4)
 -Z ARG     Pass ARG to the zramctl call
 
-Call with LANG=C to disable translations'; echo
+Call with LANG=C to disable translations'
 	exit ${1:-1}
 }
 
@@ -210,7 +239,7 @@ fi
 # Defaults for empty/unspecified options:
 : "${dev:=0}" "${prio:=16383}" "${fstype:=ext4}"
 
-IsNumeric "$dev" || xFatal 'device $dev is not numeric'
+IsNumeric "$dev" || xFatal 'device ${dev} is not numeric'
 
 devnode=/dev/zram$dev
 zclass=/sys/class/zram-control
@@ -218,17 +247,17 @@ block=/sys/block/zram$dev
 
 size=${1:-0}
 
-case "${size}" in
+case ${size} in
 w*)
 	SysCtlN idle "$block/writeback" || \
-		xFatal 'failed to idle writeback zram$dev'
+		xFatal 'failed to idle writeback zram${dev}'
 	exit;;
 esac
 
-IsNumeric "${size}" || xFatal 'size $size is not numeric'
-IsNumeric "${mem_limit:-0}" || xFatal 'mem_limit $mem_limit is not numeric'
+IsNumeric "${size}" || xFatal 'size ${size} is not numeric'
+IsNumeric "${mem_limit:-0}" || xFatal 'mem_limit ${mem_limit} is not numeric'
 IsNumeric "${writeback_limit:-0}" || \
-	xFatal 'writeback_limit $writeback_limit is not numeric'
+	xFatal 'writeback_limit ${writeback_limit} is not numeric'
 
 umount=:
 if [ ${size} -ne 0 ]
@@ -262,7 +291,7 @@ HotAdd() {
 			exec 3<&-
 		}
 		IsNumeric "$curradd" || {
-			xWarning 'hot_add failed for $devnode'
+			xWarning 'hot_add failed for ${devnode}'
 			break
 		}
 		[ $curradd -lt $dev ] || break
@@ -271,20 +300,20 @@ HotAdd() {
 	while ! test -b "$devnode"
 	do	sleep 1
 		sleep=$(( $sleep + 1 ))
-		[ $sleep -lt 5 ] || xFatal 'failed to create $devnode'
+		[ $sleep -lt 5 ] || xFatal 'failed to create ${devnode}'
 	done
 }
 
 if ! test -b "$devnode"
 then	$umount && exit
-	IsNumeric "${num:-0}" || xFatal 'device count $num is not numeric'
+	IsNumeric "${num:-0}" || xFatal 'device count ${num} is not numeric'
 	modprobe zram ${num:+num_devices=$num} >/dev/null 2>&1
 	sleep=0
 	while ! test -b "$devnode" && ! test -d "$zclass"
 	do	sleep 1
 		sleep=$(( $sleep + 1 ))
 		[ $sleep -lt 5 ] || \
-			xFatal 'cannot create $devnode: $zclass missing'
+			xFatal 'cannot create ${devnode}: ${zclass} missing'
 	done
 	test -b "$devnode" || {
 		HotAdd
@@ -292,7 +321,7 @@ then	$umount && exit
 	}
 fi
 if ! $zramctl || [ -n "$mem_limit" ] || [ -n "${backing_dev:++}" ]
-then	test -d "$block" || xFatal 'cannot find $block'
+then	test -d "$block" || xFatal 'cannot find ${block}'
 fi
 
 status=0
@@ -312,7 +341,7 @@ then	if $swap
 			fi
 		fi
 		[ $status -eq 0 ] || \
-			xWarning 'failed to reset zram$dev'
+			xWarning 'failed to reset zram${dev}'
 	fi
 fi
 $umount && exit $status
@@ -325,46 +354,47 @@ then	eval "set -- a $zramctl_opt"
 	zramctl --size "$size" \
 		${streams:+--streams "$streams"} \
 		${algo:+--algorithm "$algo"} ${1+"$@"} \
-		-- "$devnode" || xFatal 'zramctl zram$dev failed'
-else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" || \
-		xWarning 'failed to set zram$dev max_comp_streams to $streams'
+		-- "$devnode" || xFatal 'zramctl zram${dev} failed'
+else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
+		|| xWarning \
+		'failed to set zram${dev} max_comp_streams to ${streams}'
 	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
-		xWarning 'failed to set zram$dev comp_algorithm to $algo'
+		xWarning 'failed to set zram${dev} comp_algorithm to ${algo}'
 	[ -z "${backing_dev:++}" ] || \
 		SysCtlN "$backing_dev" "$block/backing_dev" || \
-		xWarning 'failed to set zram$dev backing_dev'
+		xWarning 'failed to set zram${dev} backing_dev'
 	! $incompressible || SysCtlN huge "$block/write" || \
-		xWarning 'failed to set zram$dev incompressible writeback'
+		xWarning 'failed to set zram${dev} incompressible writeback'
 	! $writeback || InitWriteback() {
 	SysCtlN all "$block/idle" || {
-		xWarning 'failed to set zram$dev idle writeback'
+		xWarning 'failed to set zram${dev} idle writeback'
 		return
 	}
 	[ -n "${writeback_limit:++}" ] || return 0
 	SysctlN 1 "$block/writeback_limit_enable" || {
-		xWarning 'failed to enable writeback_limit for zram$dev'
+		xWarning 'failed to enable writeback_limit for zram${dev}'
 		return
 	}
-	SysctlN "$writeback_limit" "$block/writeback_limit" || \
-	xWarning 'failed to set writeback_limit $writeback_limit for zram$dev'
+	SysctlN "$writeback_limit" "$block/writeback_limit" || xWarning \
+	'failed to set writeback_limit ${writeback_limit} for zram${dev}'
 }
 	! $writeback || InitWriteback
-	SysCtl "$size" "$block/disksize" || xFatal 'cannot set zram$dev size'
+	SysCtl "$size" "$block/disksize" || xFatal 'cannot set zram${dev} size'
 fi
 [ -z "$mem_limit" ] || SysCtl "$mem_limit" "$block/mem_limit" || \
-	xWarning 'failed to set zram$dev mem_limit'
+	xWarning 'failed to set zram${dev} mem_limit'
 
 eval "set -- a $mkfs_opt"
 shift
 
 if $swap
 then	mkswap ${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
-		-- "$devnode" >/dev/null || xFatal 'mkswap $devnode failed'
+		-- "$devnode" >/dev/null || xFatal 'mkswap ${devnode} failed'
 	discardopt=-d
 	$discard || discardopt=
 	[ x"$prio" != x'-' ] || prio=
 	swapon ${prio:+-p "$prio"} $discardopt -- "$devnode" \
-		|| xFatal 'swapon $devnode failed'
+		|| xFatal 'swapon ${devnode} failed'
 	exit 0
 fi
 
@@ -375,7 +405,7 @@ ext2)
 		${inodes:+-N "$inodes"} \
 		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null \
-		|| xFatal 'mkfs.ext2 $devnode failed'
+		|| xFatal 'mkfs.ext2 ${devnode} failed'
 	eval "set -- a $tune2fs_opt"
 	shift
 	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
@@ -383,14 +413,14 @@ ext2)
 	eval "set -- a $mount_opt"
 	shift
 	mount -t ext2 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
-		|| xFatal 'mount $devnode failed';;
+		|| xFatal 'mount ${devnode} failed';;
 ext4)
 	fsopts=$fsopts',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
 	mkfs.ext4 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
 		${inodes:+-N "$inodes"} \
 		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null \
-		|| xFatal 'mkfs.ext4 $devnode failed'
+		|| xFatal 'mkfs.ext4 ${devnode} failed'
 	eval "set -- a $tune2fs_opt"
 	shift
 	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
@@ -399,28 +429,28 @@ ext4)
 	eval "set -- a $mount_opt"
 	shift
 	mount -t ext4 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
-		|| xFatal 'mount $devnode failed';;
+		|| xFatal 'mount ${devnode} failed';;
 btrfs)
 	mkfs.btrfs -d single -m single \
 		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null \
-		|| xFatal 'mkfs.btrfs $devnode failed'
+		|| xFatal 'mkfs.btrfs ${devnode} failed'
 	$mount || exit 0
 	eval "set -- a $mount_opt"
 	shift
 	mount -t btrfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
-		|| xFatal 'mount $devnode failed';;
+		|| xFatal 'mount ${devnode} failed';;
 xfs)
 	mkfs.xfs ${label:+-L "$label"} ${uuid:+-m uuid="$uuid"} \
 		${1+"$@"} -- "$devnode" >/dev/null \
-		|| xFatal 'mkfs.xfs $devnode failed'
+		|| xFatal 'mkfs.xfs ${devnode} failed'
 	$mount || exit 0
 	eval "set -- a $mount_opt"
 	shift
 	mount -t xfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
-		|| xFatal 'mount $devnode failed';;
+		|| xFatal 'mount ${devnode} failed';;
 *)
-	xFatal 'unsupported filesystem $fstype';;
+	xFatal 'unsupported filesystem ${fstype}';;
 esac
 
 # Change owner/mode if requested

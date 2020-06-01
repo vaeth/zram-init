@@ -7,6 +7,9 @@
 	- French translation
 
 	Martin Väth <martin at mvath.de>:
+	- Fallback if gettext is not available
+	- Makefile: Separate into make | make install, shebang conversion
+	- Makefile: make most installs optional
 	- German translation
 
 *zram-init-9.1:

@@ -3,7 +3,7 @@ _arguments -s -S -A '-*' : \
 '(* -)'{'-h','-H'}'[help]' \
 '-d+[use specified zram device nr]:device-nr:(/dev/zram*(\:t\:s/zram/))' \
 '(2 -t -c -m -o)-p+[use specified priority for swap]:priority for swap:(0 1 16383 -)' \
-'(-p)-t+[use specified filesystem type]:filesystem type:(ext2 ext4 btrfs)' \
+'(-p)-t+[use specified filesystem type]:filesystem type:(ext2 ext4 btrfs xfs)' \
 '-b+[use specifed device as backing device]:device:_files -g "*(-%b,-/)"' \
 '-I[enable incompressible writeback on backing device]' \
 '-w[enable idle writeback on backing device]' \

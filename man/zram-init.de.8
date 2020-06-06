@@ -1,0 +1,151 @@
+.TH ZRAM-INIT "8" "June 2020" "zram-init" "System Administration"
+.\" {{{ SEE ALSO
+.SH "NAME"
+\fBzram-init\fR \- Skripte zur Unterst\(:utzung komprimierter Swap-Devices oder Ramdisks mit zram
+.\" }}}
+
+.\" {{{ SYNOPSIS
+.SH "\(:UBERSICHT"
+.B zram-init
+[\fI\,options\/\fR] \fI\,GR\(:OSSE\fR|\fIwrite \/\fR[\fI\,VERZEICHNIS\/\fR]
+.\" }}}
+
+.\" {{{ DESCRIPTION
+.SH "BESCHREBIUNG"
+Initialisiert ein zram-Device und benutzt es als Swap (bzw. h\(:angt es unter \fIVERZEICHNIS\fR ein).
+.br
+\fIGR\(:OSSE\fR ist der Maximalwert in Megabytes. Zum Aush\(:angen/Freigeben des zram-Devicesevice, kann man \fISIZE=0\fR benutzen.
+.br
+Bei Benutzung von \fIwrite\fR (oder etwas anderem, das mit \fIw\fR beginnt) wird ein idle writeback erzweungen. (Das ist nur nach vorheriger Initialisierung mit \fB-w\fR bzw. \fB-W\fR \fILIMIT\fR sinnvoll.)
+.sp
+Falls \fIVERZEICHNIS\fR ein \- ist, so wird nur ein Dateisystem in /dev/zram\fIDEV\fR erzeugt (bzw. falls \fIGR\(:OSSE\fR 0 ist,
+wird das Device gel\(:oscht), aber es wird nicht eingeh\(:angt. (Die Optionen \fB\-o\fR \fB\-c\fR \fB\-m\fR und \fB\-T\fR haben in diesem Fall nat\(:urlich keine Wirkung.)
+.br
+Letzteres kann sinnvoll sein, wenn z.B: f\(:ur Btrfs sp\(:ater mehrere Devices gemeinsam eingeh\(:angt werden sollen.
+.br
+.\" }}}
+
+.\" {{{ OPTIONS
+.SH "OPTIONEN"
+Ein leeres Argument ist gleichbedeutend mit dem Weglassen der Option.
+.TP
+.BR "\-d " \fIDEV
+Nutzt zram-Device /dev/zram\fIDEV\fR. Voreinstellung ist 0 (/dev/zram0).
+.br
+Der selbe Wert muss auch zum Aush\(:angen (\fIGR\(:OSSE\fR=0) benutzt werden!
+.TP
+.BR "-D " \fINUM
+Wenn modprobe benutzt werden muss, werden \fINUM\fR Devices angefordert.
+.br
+Dies ist nicht empfohlen. Empfohlen ist statt dessen die Nutzung von
+\fI\,/etc/modprobe.d/zram.conf\/\fP mit der Zeile
+.br
+options zram num_devices=\fINUM\fR
+.TP
+.BR "\-s " \fINUM
+Nutzt bis zu \fINUM\fR paralleler Kompressionsstr\(:ome f\(:ur das Device.
+.TP
+.BR "\-S " \fIMAX
+Nutzt maximal \fIMAX\fR Megabytes unkompromierten Speicher f\(:ur das Device.
+.TP
+.BR "\-b " \fIDEV
+Nutzt \fIDEV\fR als Backing Device.
+.TP
+.BR \-I
+Falls mit \fB\-b\fR \fIDEV\fR kombiniert, speichert unkomprimierbare Seiten
+in das Backing Device.
+.TP
+.BR \-w
+Falls mit \fB\-b\fR \fIDEV\fR kombiniert, erm\(:oglicht Idle Writeback f\(:ur das
+Backing Device.
+.TP
+.BR "\-W " \fILIMIT
+Wie \fB-w\fR, aber zus\(:atzlich wird \fBwriteback_limit\fR auf \fILIMIT\fR * 4kB
+gesetzt.
+.TP
+.BR "\-a 842" | deflate | lz4 | lz4hc | lzo | zstd
+Setzt den Kompressions-Algorithmus.
+.TP
+.BR "\-c " \fIOWNER
+Chown auf \fIOWNER\fR (bzw, \fIOWNER:GROUP\fR) nach dem Einh\(:angen.
+.TP
+.BR "\-m " \fIMODE
+Chmod \fIVERZEICHNIS\fR auf \fIMODE\fR after mounting.
+.TP
+.BR "\-o " \fIOPTS
+H\(:angt \fIVERZEICHNIS\fR mit Option \fB\-o\fR \fIOPTS\fR ein.
+.TP
+.BR "\-p " \fIPRIO
+Nutzt Priorit\(:at \fIPRIO\fR f\(:ur das Swap-Device. Voreinstellung ist 16383.
+.br
+Mit \fIPRIO=\-\fR wird die voreingestellte Priorit\(:at (-1) beibehalten.
+.TP
+.BR "\-t ext2" | ext4 | btrfs | xfs
+Legt Dateisystem-Typ fest, wenn \fIVERZEICHNIS\fR angegeben ist.
+Voreinstellung ist \fBext4\fR.
+.TP
+.BR "\-i " \fIIRATIO
+Wenn angegeben, wird das Bytes/Inodes-Verh\(:altnis im Dateisystem \(:uberschrieben
+(ext2, ext4).
+.TP
+.BR "\-N " \fIINODES
+Wenn angegeben, wird die Inode-Zahl \(:uberschrieben (ext2, ext4).
+.TP
+.BR "\-L " \fILABEL
+Nimmt Label \fILABEL\fR f\(:ur das neue Dateisystem.
+.TP
+.BR "\-U " \fIUUID
+Nimmt Uuid \fIUUID\fR f\(:ur das neue Dateisystem.
+.TP
+.B \-T
+Wenn angegeben wird das Discard (TRIM) Feature von ext4/swap nicht genutzt.
+.br
+Diese Option ist f\(:ur linux\-3.14 oder fr\(:uher, oder when ein kleiner
+Geschwindigkeitsvorteil auf Kosten von m\(:oglicherweise viel Speicher
+gew\(:unscht wird.
+.TP
+.BR \-l
+Vermeidet die Benutzung von zramctl, selbst wenn verf\(:ugbar.
+.TP
+.BR \-k
+Versucht nicht, ein vorheriges ZRAM unter diesem Device auszuh\(:angen oder
+zu Deinitialisieren.
+.P
+Falls \fBpush.sh\fR im \fB$PATH\fR ist, kann man folgende sukzessive
+Optionen nutzen:
+.P
+.TP
+.BR "\-K " \fIARG
+\(:Ubergibt \fIARG\fR an den zugeh\(:origen Aufruf von mkswap bzw mkfs.*.
+.TP
+.BR "\-M " \fIARG
+\(:Ubergibt \fIARG\fR an den zugeh\(:origen Aufruf von swapon/mount.
+.TP
+.BR "\-2 " \fIARG
+\(:Ubergibt \fIARG\fR an den Aufruf von tune2fs (nur f\(:ur ext2 oder ext4).
+.TP
+.BR "\-Z " \fIARG
+\(:Ubergibt \fIARG\fR an den Aufruf von zramctl.
+.P
+Aufruf mit \fBLANG=C\fR schaltet die \(:Ubersetzungen aus.
+.\" }}}
+
+.\" {{{ AUTHORS
+.SH "AUTHORS"
+.LP
+Martin V\(:ath <martin at mvath.de> (developer, current maintainer)
+.\" }}}
+
+.\" {{{ SEE ALSO
+.SH "SEE ALSO"
+.BR zramctl (8),
+.BR mkswap (8),
+.BR mke2fs (8),
+.BR mkfs.btrfs (8)
+.sp
+The zram-init homepage
+.UR https://github.\:com\:/vaeth\:/zram-init
+.UE " provides further information and links."
+.\" }}}
+
+.\" vim:set tw=90 expandtab foldenable foldmethod=marker foldlevel=0 :

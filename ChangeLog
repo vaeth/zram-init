@@ -1,5 +1,13 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.1:
+	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
+	- Fixes in docu
+
+	Martin Väth <martin at mvath.de>:
+	- Fixes in docu
+	- German manpage
+
 *zram-init-10.0:
 	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
 	- XFS support

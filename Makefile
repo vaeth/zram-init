@@ -8,7 +8,9 @@ DESTDIR     ?=
 
 BINDIR      ?= $(DESTDIR)$(PREFIX)/sbin
 MODPROBEDIR ?= $(DESTDIR)$(SYSCONFDIR)/modprobe.d
-MANDIR      ?= $(DESTDIR)$(PREFIX)/share/man/man8
+MANDIR      ?= $(DESTDIR)$(PREFIX)/share/man
+MANSUBDIR   ?= man8
+MANI18NAPP  ?=
 MODIR       ?= $(DESTDIR)$(PREFIX)/share/locale
 COMP_ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh/site-functions
 SYSTEMDDIR  ?= $(DESTDIR)$(PREFIX)/lib/systemd/system
@@ -16,6 +18,8 @@ CONFDIR     ?= $(DESTDIR)$(SYSCONFDIR)/conf.d
 INITDIR     ?= $(DESTDIR)$(SYSCONFDIR)/init.d
 
 PO ?= i18n/de.po i18n/fr.po
+
+MANI18N     ?= de fr
 
 GETTEXT ?= TRUE
 MODIFY_SHEBANG ?= TRUE
@@ -80,8 +84,13 @@ ifeq ($(MODPROBED), TRUE)
 	$(INSTALL_DATA) modprobe.d/zram.conf '$(MODPROBEDIR)/zram.conf'
 endif
 ifeq ($(MANPAGE), TRUE)
-	@echo 'Installing the man page…'
-	$(INSTALL_DATA) 'man/$(EXENAME).8' '$(MANDIR)/$(EXENAME).8'
+	@echo 'Installing the man pages…'
+	$(INSTALL_DATA) 'man/$(EXENAME).8' '$(MANDIR)/$(MANSUBDIR)/$(EXENAME).8'
+	for i in $(MANI18N); do \
+		! test -r 'man/$(EXENAME).$$i.8' || \
+			$(INSTALL_DATA) 'man/$(EXENAME).$$i.8' \
+		'$(MANDIR)/$$i$(MANI18NAPP)/$(MANSUBDIR)/$(EXENAME).8' ; \
+	done
 endif
 ifeq ($(GETTEXT), TRUE)
 	@echo 'Installing the Machine Object files…'

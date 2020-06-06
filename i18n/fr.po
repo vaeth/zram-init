@@ -4,7 +4,7 @@
 # Mattéo Rossillol‑‑Laruelle <beatussum@protonmail.com>, 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: zram-init 9.1\n"
+"Project-Id-Version: zram-init\n"
 "Report-Msgid-Bugs-To: Martin V\"ath <martin@mvath.de>\n"
 "POT-Creation-Date: 2020-06-01 13:19+0200\n"
 "PO-Revision-Date: 2020-06-01 13:43+0200\n"

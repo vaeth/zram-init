@@ -1,4 +1,4 @@
-.TH ZRAM-INIT "8" "January 2020" "zram-init" "System Administration"
+.TH ZRAM-INIT "8" "June 2020" "zram-init" "System Administration"
 .\" {{{ SEE ALSO
 .SH "NAME"
 \fBzram-init\fR \- Scripts to support compressed swap devices or ramdisks with zram
@@ -32,6 +32,8 @@ An empty argument means the same as if the option is not specified.
 .TP
 .BR "\-d " \fIDEV
 Use zram device /dev/zram\fIDEV\fR. Default is 0 (/dev/zram0).
+.br
+Make sure to use the matching value for unmounting (\fISIZE\fR=0)!
 .TP
 .BR "-D " \fINUM
 If modprobe needs to be used, require \fINUM\fR devices.
@@ -90,6 +92,19 @@ Specify the uuid \fIUUID\fR for the new filesystem.
 .TP
 .B \-T
 Do not use the discard (TRIM) feature of ext4/swap.
+.br
+Use this option with linux-3.14 or earlier or when you want a slight
+speed increase at the cost of possibly wasting a lot of memory.
+.TP
+.BR \-l
+Do not use zramctl even if available.
+.TP
+.BR \-k
+Do no attempt to umount/free a previously used zram under this device.
+.P
+If you have \fBpush.sh\fR in \fB$PATH\fR, you can also use the following
+options accumulatively:
+.P
 .TP
 .BR "\-K " \fIARG
 Pass \fIARG\fR to the respective mkswap or mkfs.* call.
@@ -101,17 +116,9 @@ Pass \fIARG\fR to the respective swapon/mount call.
 Pass \fIARG\fR to the tune2fs call (ignored unless for ext2 or ext4).
 .TP
 .BR "\-Z " \fIARG
-Pass \fIARG\fR to the zramctl call
+Pass \fIARG\fR to the zramctl call.
 .P
-Use the following options with linux\-3.14 or earlier or when you want a slight
-speed increase at the cost of possibly wasting a lot of memory.
-.P
-.TP
-.BR \-l
-Do not use zramctl even if available.
-.TP
-.BR \-k
-Do no attempt to umount/free a previously used zram under this device.
+Call with \fBLANG=C\fR to disable translations.
 .\" }}}
 
 .\" {{{ AUTHORS

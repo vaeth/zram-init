@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.2:
+	Martin Väth <martin at mvath.de>:
+	- Yet another docu fix: update conf.d comments
+
 *zram-init-10.1:
 	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
 	- Fixes in docu

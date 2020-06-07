@@ -51,10 +51,11 @@ num_devices=2
 #
 # Only variables with numbers  0 ... num_devices-1  are used by the script.
 
-# swap - 500M
+# swap - 500M (or a fourth of available memory if uncommenting)
 type0=swap
 flag0= # The default "16383" is fine for us
-size0=`LC_ALL=C free -m | awk '/^Mem:/{print int($2/2)}'`
+size0=512
+#size0=`LC_ALL=C free -m | awk '/^Mem:/{print int($2/4)}'`
 mlim0= # no hard memory limit
 back0= # no backup device
 icmp0= # no incompressible page writing to backup device
@@ -110,6 +111,7 @@ uuid2=
 args2=
 
 # Artificial example with btrfs
+# (Not actually used here: variables are overridden afterwards by other values)
 type3=- # Only format the filesystem but actually do not mount it
 flag3=btrfs
 size3=1024

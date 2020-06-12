@@ -262,7 +262,7 @@ IsNumeric "${writeback_limit:-0}" || \
 umount=:
 if [ ${size} -ne 0 ]
 then	umount=false
-	size=$(( $1 * 1024 * 1024 )) && [ $size -gt 0 ] || \
+	size=$1 && [ $size -gt 0 ] || \
 		Fatal 'failed to calculate size'
 fi
 
@@ -351,7 +351,7 @@ test -b "$devnode" || HotAdd
 if $zramctl && [ -z "${backing_dev:++}" ]
 then	eval "set -- a $zramctl_opt"
 	shift
-	zramctl --size "$size" \
+	zramctl --size "${size}MiB" \
 		${streams:+--streams "$streams"} \
 		${algo:+--algorithm "$algo"} ${1+"$@"} \
 		-- "$devnode" || xFatal 'zramctl zram${dev} failed'
@@ -379,7 +379,7 @@ else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
 	'failed to set writeback_limit ${writeback_limit} for zram${dev}'
 }
 	! $writeback || InitWriteback
-	SysCtl "$size" "$block/disksize" || xFatal 'cannot set zram${dev} size'
+	SysCtl "${size}M" "$block/disksize" || xFatal 'cannot set zram${dev} size'
 fi
 [ -z "$mem_limit" ] || SysCtl "$mem_limit" "$block/mem_limit" || \
 	xWarning 'failed to set zram${dev} mem_limit'

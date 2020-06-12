@@ -1,5 +1,12 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.3:
+	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
+	- Fix locales directory in Makefile
+
+	Jan Palus <atler at pid-linux.org>:
+	- Avoid shell calculation
+
 *zram-init-10.2:
 	Martin Väth <martin at mvath.de>:
 	- Yet another docu fix: update conf.d comments

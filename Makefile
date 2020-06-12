@@ -11,8 +11,8 @@ MODPROBEDIR ?= $(DESTDIR)$(SYSCONFDIR)/modprobe.d
 MANDIR      ?= $(DESTDIR)$(PREFIX)/share/man
 MANSUBDIR   ?= man8
 MANI18NAPP  ?=
-MODIR       ?= $(DESTDIR)$(PREFIX)/share/locale
-MODIR_SED   ?= $(MODIR)
+MODIR_PLAIN ?= $(PREFIX)/share/locale
+MODIR       ?= $(DESTDIR)$(MODIR_PLAIN)
 COMP_ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh/site-functions
 SYSTEMDDIR  ?= $(DESTDIR)$(PREFIX)/lib/systemd/system
 CONFDIR     ?= $(DESTDIR)$(SYSCONFDIR)/conf.d
@@ -67,7 +67,7 @@ i18n/%.mo: i18n/%.po
 
 sbin/$(EXENAME): sbin/$(EXENAME).in
 	@echo 'Setting TEXTDOMAINDIR and TEXTDOMAIN variables'
-	sed -e "s'@MODIR@'$(MODIR_SED)'g" -e "s'@EXENAME@'$(EXENAME)'g" \
+	sed -e "s'@MODIR@'$(MODIR_PLAIN)'g" -e "s'@EXENAME@'$(EXENAME)'g" \
 		-- '$<' >'$@'
 	chmod 755 -- '$@' || echo 'warn: chmod 755 $@ failed'
 ifeq ($(MODIFY_SHEBANG), TRUE)

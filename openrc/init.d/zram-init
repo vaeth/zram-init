@@ -10,7 +10,8 @@ ZramInit() {
 		${mlim:+-S "$mlim"} ${back:+-b "$back"} \
 		${icmp:+-I} ${idle:+-w} ${wlim:+-W "$wlim"} \
 		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} \
-		${labl:+-L "$labl"} ${uuid:+-U "$uuid"} ${notr:+-T}
+		${labl:+-L "$labl"} ${uuid:+-U "$uuid"} ${notr:+-T} \
+		${blck:+-B "$blck"} ${irat:+-i "$irat"} ${inod:+-N "$inod"}
 	[ -z "${args:++}" ] || eval 'set -- "$@" '"$args"
 	if [ x"$fstype" = x'swap' ]
 	then	einfo "Swap->zram$2"
@@ -49,14 +50,17 @@ ZramSanityCheck() {
 ZramIgnore() {
 	eval "fstype=\${type$1-}
 		size=\${size$1:-0}
-		mlim=\${mlim$1}
-		back=\${back$1}
-		icmp=\${icmp$1}
-		idle=\${idle$1}
-		wlim=\${wlim$1}
+		mlim=\${mlim$1-}
+		back=\${back$1-}
+		icmp=\${icmp$1-}
+		idle=\${idle$1-}
+		wlim=\${wlim$1-}
 		maxs=\${maxs$1-}
 		algo=\${algo$1-}
 		flag=\${flag$1-}
+		blck=\${blck$1-}
+		irat=\${irat$1-}
+		inod=\${inod$1-}
 		opts=\${opts$1-}
 		owgr=\${owgr$1-}
 		mode=\${mode$1-}

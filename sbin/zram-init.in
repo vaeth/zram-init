@@ -149,6 +149,7 @@ An empty argument means the same as if the option is not specified.
 -t TYPE    Use a filesystem of type TYPE if DIR is specified.
            TYPE can be either ext2, ext4, btrfs or xfs
            If not specified, TYPE=ext4 is assumed.
+-B BSIZE   Override default blocksize (ext2, ext4) (BSIZE=1024|2048|4096)
 -i IRATIO  If specified override default bytes/inodes in fs (ext2, ext4)
 -N INODES  If specified override inode count (ext2, ext4)
 -L LABEL   Specify the label LABEL for the new filesystem
@@ -180,6 +181,7 @@ fstype=
 opts=
 mode=
 owgr=
+blocksize=
 iratio=
 inodes=
 label=
@@ -197,7 +199,7 @@ writeback=false
 writeback_limit=
 incompressible=false
 OPTIND=1
-while getopts 's:S:a:b:Ic:d:D:m:o:p:t:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
+while getopts 's:S:a:b:Ic:d:D:m:o:p:t:B:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
 	S)	mem_limit=$OPTARG;;
@@ -211,6 +213,7 @@ do	case $opt in
 	o)	opts=$OPTARG;;
 	p)	prio=$OPTARG;;
 	t)	fstype=$OPTARG;;
+	B)	blocksize=$OPTARG;;
 	i)	iratio=$OPTARG;;
 	N)	inodes=$OPTARG;;
 	L)	label=$OPTARG;;
@@ -401,8 +404,8 @@ fi
 fsopts='-O^huge_file,sparse_super'
 case $fstype in
 ext2)
-	mkfs.ext2 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
-		${inodes:+-N "$inodes"} \
+	mkfs.ext2 -m0 "$fsopts" ${blocksize:+-b "$blocksize"} \
+		${iratio:+-i "$iratio"} ${inodes:+-N "$inodes"} \
 		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null \
 		|| xFatal 'mkfs.ext2 ${devnode} failed'
@@ -416,8 +419,8 @@ ext2)
 		|| xFatal 'mount ${devnode} failed';;
 ext4)
 	fsopts=$fsopts',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
-	mkfs.ext4 -m0 "$fsopts" ${iratio:+-i "$iratio"} \
-		${inodes:+-N "$inodes"} \
+	mkfs.ext4 -m0 "$fsopts" ${blocksize:+-b "$blocksize"} \
+		${iratio:+-i "$iratio"} ${inodes:+-N "$inodes"} \
 		${label:+-L "$label"} ${uuid:+-U "$uuid"} ${1+"$@"} \
 		-- "$devnode" >/dev/null \
 		|| xFatal 'mkfs.ext4 ${devnode} failed'

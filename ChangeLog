@@ -1,5 +1,10 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.4:
+	Martin Väth <martin at mvath.de>:
+	- New option -B to change default block size for ext2, ext4
+	- Support setting default block size, inode ratio/number in openrc
+
 *zram-init-10.3:
 	Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com>:
 	- Fix locales directory in Makefile

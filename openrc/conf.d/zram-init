@@ -32,6 +32,9 @@ num_devices=2
 # (set notr* to a nonempty value only for linux-3.14 or earlier or when you
 # are prepared to waste a lot of memory for a possibly slight speed increase)
 # The following are ignored for type swap but not for the other types:
+# blck0, blck1, ... are the variables for the blocksize (ext2, ext4)
+# irat0, irat1, ... are the variables for the byte/inode ratio (ext2, ext4)
+# inod0, inod1, ... are the variables for the inode number (ext2, ext4)
 # opts0, opts1, ... are the variables for the mount options
 # mode0, mode1, ... are the variables for the directory mode
 # owgr0, owgr1, ... are the variables for the directory owner:group
@@ -81,6 +84,9 @@ back1= # no backup device
 icmp1= # no incompressible page writing to backup device
 idle1= # no idle page writing to backup device
 wlim1= # no writeback_limit for idle page writing for backup device
+blck1=1024 # the default blocksize of 4096
+irat1= # bytes/inode ratio
+inod1= # inode number
 opts1="strictatime,nosuid,nodev,noexec" # e.g. "relatime" or "noatime" are also reasonable choices
 mode1=1777
 owgr1= # No reason to change the default "root:root"
@@ -100,6 +106,9 @@ back2= # no backup device
 icmp2= # no incompressible page writing to backup device
 idle2= # no idle page writing to backup device
 wlim2= # no writeback_limit for idle page writing for backup device
+blck2= # the default blocksize is 4096
+irat2= # bytes/inode ratio
+inod2= # inode number
 opts2=relatime # e.g. "noatime" or "strictatime" are also reasonable choices
 mode2=1777
 owgr2= # No reason to change the default "root:root"

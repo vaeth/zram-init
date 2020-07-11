@@ -1,4 +1,4 @@
-.TH ZRAM-INIT "8" "June 2020" "zram-init" "System Administration"
+.TH ZRAM-INIT "8" "July 2020" "zram-init" "System Administration"
 .\" {{{ SEE ALSO
 .SH "NAME"
 \fBzram-init\fR \- Scripts to support compressed swap devices or ramdisks with zram
@@ -77,6 +77,9 @@ Use \fIPRIO=\-\fR if you want to keep the default priority (-1).
 .TP
 .BR "\-t ext2" | ext4 | btrfs | xfs
 Set the filesystem type if \fIDIR\fR is specified. Default is \fBext4\fR.
+.TP
+.BR "\-B " \fIBSIZE
+Override default blocksize (ext2, ext4). Valid values are 1024, 2048, 4096.
 .TP
 .BR "\-i " \fIIRATIO
 Override default bytes/inodes in fs (ext2, ext4).

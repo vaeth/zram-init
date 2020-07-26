@@ -2,9 +2,10 @@
 
 A wrapper script for the zram kernel module with interactive and init support
 
-(C) Martin Väth (mvath at google.com).
+(C) Martin Väth (martin at mvath.de).
 Many thanks to all people in the `AUTHORS` file for contributing.
 The license of this package is the GNU Public License GPL-2.
+SPDX-License-Identifier: GPL-2.0-only
 
 This is a small helper script to setup a zram device as swap or as a ramdisk.
 Also a __zsh completion__ file and __openrc__ and __systemd__ init-scripts

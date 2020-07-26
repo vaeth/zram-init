@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
 BUGADDR   = Martin V\"ath <martin@mvath.de>
 
 EXENAME ?= zram-init

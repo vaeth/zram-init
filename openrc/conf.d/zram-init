@@ -1,4 +1,5 @@
 # zram settings...
+# SPDX-License-Identifier: GPL-2.0-only
 
 # load zram kernel module on start?
 load_on_start=yes

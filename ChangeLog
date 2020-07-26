@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.5:
+	Martin Väth <martin at mvath.de>:
+	- Add SPDX-License-Identifier
+
 *zram-init-10.4:
 	Martin Väth <martin at mvath.de>:
 	- New option -B to change default block size for ext2, ext4

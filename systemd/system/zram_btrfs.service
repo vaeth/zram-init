@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
 [Unit]
 Description=Create btrfs on zram /dev/zram1 without mounting it
 DefaultDependencies=no

@@ -1,4 +1,5 @@
 #compdef zram-init
+# SPDX-License-Identifier: GPL-2.0-only
 _arguments -s -S -A '-*' : \
 '(* -)'{'-h','-H'}'[help]' \
 '-d+[use specified zram device nr]:device-nr:(/dev/zram*(\:t\:s/zram/))' \

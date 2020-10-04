@@ -367,7 +367,8 @@ else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
 	[ -z "${backing_dev:++}" ] || \
 		SysCtlN "$backing_dev" "$block/backing_dev" || \
 		xWarning 'failed to set zram${dev} backing_dev'
-	! $incompressible || SysCtlN huge "$block/write" || \
+	SysCtl "${size}M" "$block/disksize" || xFatal 'cannot set zram${dev} size'
+	! $incompressible || SysCtlN huge "$block/writeback" || \
 		xWarning 'failed to set zram${dev} incompressible writeback'
 	! $writeback || InitWriteback() {
 	SysCtlN all "$block/idle" || {
@@ -383,7 +384,6 @@ else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
 	'failed to set writeback_limit ${writeback_limit} for zram${dev}'
 }
 	! $writeback || InitWriteback
-	SysCtl "${size}M" "$block/disksize" || xFatal 'cannot set zram${dev} size'
 fi
 [ -z "$mem_limit" ] || SysCtl "$mem_limit" "$block/mem_limit" || \
 	xWarning 'failed to set zram${dev} mem_limit'

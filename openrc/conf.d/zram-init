@@ -13,14 +13,14 @@ num_devices=2
 
 # For each device, specify the following variables
 # Omitting them is the same as specifying them as empty: It uses defaults
-# type0, type1, ... are the variables for the types
+# type0, type1, ... are the variables for the types (see below)
 # size0, size1, ... are the variables for the sizes (in MB)
 # mlim0, mlim1, ... are the variables for the maximal uncompressed memory (MB)
-# back0, back1, ... are the variables for the backup device
-# icmp0, icmp1, ... are the flags (if nonempty) for writing incompressible
-#                   pages to the backup device (requires setting back*)
-# idle0, idle1, ... are the flags (in nonempty) for writing idle pages to the
-#                   backup device (requires setting back*)
+# back0, back1, ... are the variables for the backup device (paths)
+# icmp0, icmp1, ... are the flags (nonempty = true) whether incompressible
+#                   pages are written to the backup device (requires back*)
+# idle0, idle1, ... are the flags (nonempty = true) whether idle pages are
+#                   written to the backup device (requires back*)
 # wlim0, wlim1, ... set the writeback_limit for idle pages (implies idle*)
 # maxs0, maxs1, ... are the variables for the maximal (parallel) streams
 # algo0, algo1, ... are the variables for the compression algorithms
@@ -29,9 +29,10 @@ num_devices=2
 # uuid0, uuid1, ... are the variables for the UUID (if you want to force it)
 # args0, args1, ... are the variables for additional arguments to zram-init
 #                   (args0, args1, ... are eval'd, so quote correspondingly!)
-# notr0, notr1, ... are the flags for "do not trim (discard)" (if nonempty)
+# notr0, notr1, ... are the flags (nonempty = true) for "do not trim (discard)"
 # (set notr* to a nonempty value only for linux-3.14 or earlier or when you
 # are prepared to waste a lot of memory for a possibly slight speed increase)
+#
 # The following are ignored for type swap but not for the other types:
 # blck0, blck1, ... are the variables for the blocksize (ext2, ext4)
 # irat0, irat1, ... are the variables for the byte/inode ratio (ext2, ext4)

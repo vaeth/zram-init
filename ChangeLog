@@ -1,5 +1,13 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.6:
+	Sebastiaan (https://github.com/SharkWipf):
+	- Fix writeback settings
+
+	Martin Väth <martin at mvath.de>:
+	- Improve comments in conf.d, see
+	  https://github.com/vaeth/zram-init/issues/28
+
 *zram-init-10.5:
 	Martin Väth <martin at mvath.de>:
 	- Add SPDX-License-Identifier

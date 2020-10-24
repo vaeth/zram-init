@@ -89,9 +89,9 @@ ifeq ($(MANPAGE), TRUE)
 	@echo 'Installing the man pages…'
 	$(INSTALL_DATA) 'man/$(EXENAME).8' '$(MANDIR)/$(MANSUBDIR)/$(EXENAME).8'
 	for i in $(MANI18N); do \
-		! test -r 'man/$(EXENAME).$$i.8' || \
-			$(INSTALL_DATA) 'man/$(EXENAME).$$i.8' \
-		'$(MANDIR)/$$i$(MANI18NAPP)/$(MANSUBDIR)/$(EXENAME).8' ; \
+		! test -r "man/$(EXENAME).$$i.8" || \
+			$(INSTALL_DATA) "man/$(EXENAME).$$i.8" \
+		"$(MANDIR)/$$i$(MANI18NAPP)/$(MANSUBDIR)/$(EXENAME).8" ; \
 	done
 endif
 ifeq ($(GETTEXT), TRUE)

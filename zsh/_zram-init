@@ -18,7 +18,7 @@ _arguments -s -S -A '-*' : \
 '-a+[use specified compression algorithm]:compression algorithm:(lzo lz4 zstd)' \
 '-L+[use specified label]:label:(zram zswap)' \
 '-U+[use specified uuid]:uuid:(01234567-89ab-cdef-fedc-ba9876543210 fedcba98-7654-3210-0123-456789abcdef)' \
-'(-B)[use specified block size]:block sizet:(1024 2048 4096)' \
+'-B[use specified block size]:block size:(1024 2048 4096 8192)' \
 '(-i)-N+[use specified inodes count]:inode count:(65536 262144 524288 1048576 4194304)' \
 '(-N)-i+[use specified bytes/inodes ratio]:inode ratio:(128 2048 4096 8192 32768 65536)' \
 '-k[do not remove previously used zram]' \

@@ -10,6 +10,7 @@ Karol Herbst <git at karolherbst.de>
 ko-zu
 Thomas Kear
 Jan Palus <atler at pid-linux.org> (avoid shell calculation)
+Kriss (https://github.com/Kr1ss-XD) (fix installing the localized manpages)
 Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com> (https://github.com/beatussum) (XFS support, Makefile, i18n support, Makefile, French translation)
 Edlund Scott <at sredlund>
 Sebastiaan (https://github.com/SharkWipf)

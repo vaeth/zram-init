@@ -49,7 +49,7 @@ ZramSanityCheck() {
 }
 
 ZramIgnore() {
-	eval "fstype=\${type$1-}
+	eval "fstype=\${type$1-} opts=\${opts$1-}
 		size=\${size$1:-0}
 		mlim=\${mlim$1-}
 		back=\${back$1-}
@@ -62,7 +62,6 @@ ZramIgnore() {
 		blck=\${blck$1-}
 		irat=\${irat$1-}
 		inod=\${inod$1-}
-		opts=\${opts$1-}
 		owgr=\${owgr$1-}
 		mode=\${mode$1-}
 		labl=\${labl$1-}

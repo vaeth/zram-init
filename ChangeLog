@@ -1,5 +1,11 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.9:
+	Martin Väth <martin at mvath.de>:
+	- Workaround for zsh completion heuristics for init.d scripts.
+	  Thanks to Holger Hoffstätte <holger at applied-asynchrony.com>.
+	  See https://github.com/vaeth/zram-init/issues/31.
+
 *zram-init-10.8:
 	Martin Väth <martin at mvath.de>:
 	- Fix zsh completion https://github.com/vaeth/zram-init/issues/31

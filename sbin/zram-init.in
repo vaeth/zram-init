@@ -385,7 +385,7 @@ else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
 }
 	! $writeback || InitWriteback
 fi
-[ -z "$mem_limit" ] || SysCtl "$[mem_limit}M" "$block/mem_limit" || \
+[ -z "$mem_limit" ] || SysCtl "${mem_limit}M" "$block/mem_limit" || \
 	xWarning 'failed to set zram${dev} mem_limit'
 
 eval "set -- a $mkfs_opt"

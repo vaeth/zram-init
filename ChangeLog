@@ -1,5 +1,14 @@
 # ChangeLog for zram-init:
 
+*zram-init-10.12:
+	Martin Väth <martin at mvath.de>:
+	- Make the options -M and -2 work. Thanks to GimmeHardware for the
+	  report. See https://github.com/vaeth/zram-init/issues/34
+
+*zram-init-10.11:
+	Kriss:
+	- Fix typo introduced in 10.10
+
 *zram-init-10.10:
 	Martin Väth <martin at mvath.de>:
 	- Let mlim (-S) actually be in megabytes as documented (not in bytes).

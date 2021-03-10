@@ -412,11 +412,11 @@ ext2)
 		|| xFatal 'mkfs.ext2 ${devnode} failed'
 	eval "set -- a $tune2fs_opt"
 	shift
-	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
+	tune2fs -c0 -i0 -m0 ${1+"$@"} -- "$devnode" >/dev/null
 	$mount || exit 0
 	eval "set -- a $mount_opt"
 	shift
-	mount -t ext2 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+	mount -t ext2 ${opts:+-o "$opts"} ${1+"$@"} -- "$devnode" "$dir" \
 		|| xFatal 'mount ${devnode} failed';;
 ext4)
 	fsopts=$fsopts',extent,^uninit_bg,dir_nlink,extra_isize,^has_journal'
@@ -427,12 +427,12 @@ ext4)
 		|| xFatal 'mkfs.ext4 ${devnode} failed'
 	eval "set -- a $tune2fs_opt"
 	shift
-	tune2fs -c0 -i0 -m0 -- "$devnode" >/dev/null
+	tune2fs -c0 -i0 -m0 ${1+"$@"} -- "$devnode" >/dev/null
 	$mount || exit 0
 	! $discard || opts=$opts${opts:+,}'discard'
 	eval "set -- a $mount_opt"
 	shift
-	mount -t ext4 ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+	mount -t ext4 ${opts:+-o "$opts"} ${1+"$@"} -- "$devnode" "$dir" \
 		|| xFatal 'mount ${devnode} failed';;
 btrfs)
 	mkfs.btrfs -d single -m single \
@@ -442,7 +442,7 @@ btrfs)
 	$mount || exit 0
 	eval "set -- a $mount_opt"
 	shift
-	mount -t btrfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+	mount -t btrfs ${opts:+-o "$opts"} ${1+"$@"} -- "$devnode" "$dir" \
 		|| xFatal 'mount ${devnode} failed';;
 xfs)
 	mkfs.xfs ${label:+-L "$label"} ${uuid:+-m uuid="$uuid"} \
@@ -451,7 +451,7 @@ xfs)
 	$mount || exit 0
 	eval "set -- a $mount_opt"
 	shift
-	mount -t xfs ${opts:+-o "$opts"} -- "$devnode" "$dir" \
+	mount -t xfs ${opts:+-o "$opts"} ${1+"$@"} -- "$devnode" "$dir" \
 		|| xFatal 'mount ${devnode} failed';;
 *)
 	xFatal 'unsupported filesystem ${fstype}';;

@@ -277,7 +277,7 @@ then	swap=false
 	dir=${2%/}
 	if [ x"$dir" = x'-' ]
 	then	mount=false
-	elif [ -z "$dir" ] || ! test -d "$dir"
+        elif ([ -z "$dir" ] || ! test -d "$dir") && ! echo "$opts" | grep -iq 'X-mount\.mkdir'
 	then	if $umount
 		then	xWarning '${dir:-(empty)} is not a directory. Umounting anyway'
 		else	xFatal '${dir:-(empty)} is not a directory'

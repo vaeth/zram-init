@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zram-init\n"
 "Report-Msgid-Bugs-To: Martin V\"ath <martin@mvath.de>\n"
-"POT-Creation-Date: 2020-07-11 07:16+0200\n"
-"PO-Revision-Date: 2020-07-26 08:49+0200\n"
+"POT-Creation-Date: 2021-03-18 19:36+0100\n"
+"PO-Revision-Date: 2021-03-18 19:39+0100\n"
 "Last-Translator: Martin V\"ath <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -173,6 +173,14 @@ msgid "failed to calculate size"
 msgstr "Fehler bei Berechnung der Größe"
 
 #, sh-format
+msgid "${dir_or_empty} is not a directory path. Umounting anyway"
+msgstr "${dir_or_empty} ist kein Verzeichnispfad. Hänge es trotzdem aus"
+
+#, sh-format
+msgid "${dir_or_empty} is not a directory path"
+msgstr "${dir_or_empty} ist kein Verzeichnispfad"
+
+#, sh-format
 msgid "hot_add failed for ${devnode}"
 msgstr "Fehler bei hot_add für ${devnode}"
 
@@ -213,6 +221,10 @@ msgid "failed to set zram${dev} backing_dev"
 msgstr "Fehler beim Setzen von backing_dev für zram${dev}"
 
 #, sh-format
+msgid "cannot set zram${dev} size"
+msgstr "Kann Größe von zram${dev} nicht setzen"
+
+#, sh-format
 msgid "failed to set zram${dev} incompressible writeback"
 msgstr "Fehler beim Setzen von unkomprimierbarem Writeback für zram${dev}"
 
@@ -227,10 +239,6 @@ msgstr "fehler beim Einschalten von writeback_limit für zram${dev}"
 #, sh-format
 msgid "failed to set writeback_limit ${writeback_limit} for zram${dev}"
 msgstr "Fehler beim Setzen von writeback_limit ${writeback_limit} für zram${dev}"
-
-#, sh-format
-msgid "cannot set zram${dev} size"
-msgstr "Kann Größe von zram${dev} nicht setzen"
 
 #, sh-format
 msgid "failed to set zram${dev} mem_limit"

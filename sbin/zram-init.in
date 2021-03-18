@@ -275,14 +275,20 @@ if [ $# -eq 2 ]
 then	swap=false
 	mount=:
 	dir=${2%/}
-	if [ x"$dir" = x'-' ]
-	then	mount=false
-	elif [ -z "$dir" ] || ! test -d "$dir"
-	then	if $umount
-		then	xWarning '${dir:-(empty)} is not a directory. Umounting anyway'
-		else	xFatal '${dir:-(empty)} is not a directory'
-		fi
-	fi
+	case $dir in
+	'-')
+		mount=false;;
+	'/'*)
+		:;;
+	*)
+		dir_or_empty=${dir:-(empty)}
+		if $umount
+		then
+			xWarning '${dir_or_empty} is not a directory path. Umounting anyway'
+		else
+			xFatal '${dir_or_empty} is not a directory path'
+		fi;;
+	esac
 fi
 
 HotAdd() {

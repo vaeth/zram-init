@@ -63,7 +63,7 @@ A __zram-init__ package is available.
 
 ### Arch based
 
-To install on Arch based distribution: install `zram-init-git` from AUR
+To install on Arch based distribution: install `zram-init` from AUR
 
 Once installed, configure:
 ```

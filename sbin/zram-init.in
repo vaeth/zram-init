@@ -140,6 +140,7 @@ An empty argument means the same as if the option is not specified.
 -w         If combined with "-b DEV", enable idle writeback to backing device
 -W LIMIT   As "-w" but additionally set writeback_limit to LIMIT * 4kB.
 -a ALGO    Set compression algorithm to ALGO (e.g. zstd, lz4, or lzo)
+-A PARAM   Set algorithm parameters to PARAM (e.g. "algo=zstd level=22")
 -c OWNER   If specified, chown to OWNER (resp. OWNER:GROUP) after mounting.
            If not specified, the default owner (root:root) is not changed.
 -m MODE    If specified, chmod DIR to MODE after mounting.
@@ -177,6 +178,7 @@ dev=
 num=
 streams=
 algo=
+algo_params=
 prio=
 fstype=
 opts=
@@ -200,11 +202,12 @@ writeback=false
 writeback_limit=
 incompressible=false
 OPTIND=1
-while getopts 's:S:a:b:Ic:d:D:m:o:p:t:B:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
+while getopts 's:S:a:A:b:Ic:d:D:m:o:p:t:B:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
 do	case $opt in
 	s)	streams=$OPTARG;;
 	S)	mem_limit=$OPTARG;;
 	a)	algo=$OPTARG;;
+	a)	algo_params=$OPTARG;;
 	b)	backing_dev=$OPTARG;;
 	I)	incompressible=:;;
 	c)	owgr=$OPTARG;;
@@ -357,7 +360,8 @@ fi
 $umount && exit $status
 test -b "$devnode" || HotAdd
 
-
+# algo_params is not (yet) supported by zramctl
+[ -z "$algo_params" ] || SysCtlN "$algo_params" "$block/algorithm_params"
 if $zramctl && [ -z "${backing_dev:++}" ]
 then	eval "set -- a $zramctl_opt"
 	shift

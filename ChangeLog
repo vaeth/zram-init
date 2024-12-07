@@ -1,5 +1,10 @@
 # ChangeLog for zram-init:
 
+*zram-init-12.0:
+	Martin Väth <martin at mvath.de>:
+	- Support algorithm parameters (-A), see
+	  https://github.com/vaeth/zram-init/issues/43
+
 *zram-init-11.1:
 	Martin Väth <martin at mvath.de>:
 	- Make typeN=- work, see https://github.com/vaeth/zram-init/issues/38.

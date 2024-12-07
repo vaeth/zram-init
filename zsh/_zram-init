@@ -16,6 +16,7 @@ _arguments -s -S -A '-*' : \
 '-s+[use specified number of parallel streams]:stream number:(1 2)' \
 '-S+[use maximally specified megabytes uncomressed memory]:megabytes:(50 100 300 512 2048 4096 6144 8192 16384)' \
 '-a+[use specified compression algorithm]:compression algorithm:(lzo lz4 zstd)' \
+'-A+[use specified algorithm parameters]:algorithm parameters:("algo=zstd level=22")' \
 '-L+[use specified label]:label:(zram zswap)' \
 '-U+[use specified uuid]:uuid:(01234567-89ab-cdef-fedc-ba9876543210 fedcba98-7654-3210-0123-456789abcdef)' \
 '-B[use specified block size]:block size:(1024 2048 4096 8192)' \

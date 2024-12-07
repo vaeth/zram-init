@@ -24,6 +24,7 @@ num_devices=2
 # wlim0, wlim1, ... set the writeback_limit for idle pages (implies idle*)
 # maxs0, maxs1, ... are the variables for the maximal (parallel) streams
 # algo0, algo1, ... are the variables for the compression algorithms
+# para0, para1, ... are the variables for the algorithm parameters
 # flag0, flag1, ... are the variables for the flags
 # labl0, labl1, ... are the variables for the label name (if you want some)
 # uuid0, uuid1, ... are the variables for the UUID (if you want to force it)
@@ -70,6 +71,7 @@ notr0= # keep the default on linux-3.15 or newer
 maxs0=1 # maximum number of parallel processes for this device
 algo0=zstd # zstd (since linux-4.18), lz4 (since linux-3.15), or lzo.
            # Size: zstd (best) > lzo > lz4. Speed: lz4 (best) > zstd > lzo
+para0= # No algorithm parameters
 labl0=zram_swap # the label name
 uuid0= # Do not force UUID
 args0= # we could e.g. have set args0="-L 'zram_swap'" instead of using labl0
@@ -95,6 +97,7 @@ owgr1= # No reason to change the default "root:root"
 notr1= # keep the default on linux-3.15 or newer
 maxs1=2
 algo1=zstd
+para1="algo=zstd level=22" # or "algo=zstd level=22 dict=/etc/dictionary"
 labl1=tmp_dir
 uuid1=
 args1=
@@ -117,6 +120,7 @@ owgr2= # No reason to change the default "root:root"
 notr2= # keep the default on linux-3.15 or newer
 maxs2=1
 algo2=zstd
+para0= # No algorithm parameters
 labl2=var_tmp_dir
 uuid2=
 args2=

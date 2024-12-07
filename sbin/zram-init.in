@@ -207,7 +207,7 @@ do	case $opt in
 	s)	streams=$OPTARG;;
 	S)	mem_limit=$OPTARG;;
 	a)	algo=$OPTARG;;
-	a)	algo_params=$OPTARG;;
+	A)	algo_params=$OPTARG;;
 	b)	backing_dev=$OPTARG;;
 	I)	incompressible=:;;
 	c)	owgr=$OPTARG;;

@@ -97,7 +97,7 @@ owgr1= # No reason to change the default "root:root"
 notr1= # keep the default on linux-3.15 or newer
 maxs1=2
 algo1=zstd
-para1="algo=zstd level=22" # or "algo=zstd level=22 dict=/etc/dictionary"
+para1="level=3" # algorithm-specific parameters such as compression level
 labl1=tmp_dir
 uuid1=
 args1=

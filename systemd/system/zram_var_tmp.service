@@ -15,7 +15,7 @@ RemainAfterExit=true
 # zram_swap.service and zram_tmp.service and
 # that num_devices in modprobe.d/zram.conf contains the maximal used number + 1
 
-ExecStart=/sbin/zram-init -d2 -s2 -azstd -A "algo=zstd level=22" -text4 -orelatime -m1777 -Lvar_tmp_dir 2048 /var/tmp
+ExecStart=/sbin/zram-init -d2 -s2 -azstd -A "algo=zstd level=3" -text4 -orelatime -m1777 -Lvar_tmp_dir 2048 /var/tmp
 ExecStop=/sbin/zram-init -d2 0 /var/tmp
 
 [Install]

@@ -10,7 +10,7 @@ ZramInit() {
 	set -- ${1+"$@"} -D "$num_devices" \
 		${mlim:+-S "$mlim"} ${back:+-b "$back"} \
 		${icmp:+-I} ${idle:+-w} ${wlim:+-W "$wlim"} \
-		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} ${para:+-p "$para"} \
+		${maxs:+-s "$maxs"} ${algo:+-a "$algo"} ${para:+-A "$para"} \
 		${labl:+-L "$labl"} ${uuid:+-U "$uuid"} ${notr:+-T} \
 		${blck:+-B "$blck"} ${irat:+-i "$irat"} ${inod:+-N "$inod"}
 	[ -z "${args:++}" ] || eval 'set -- "$@" '"$args"

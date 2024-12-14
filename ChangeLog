@@ -1,6 +1,13 @@
 # ChangeLog for zram-init:
 
+*zram-init-12.1:
+	Livia Medeiros (https://github.com/LiviaMedeiros):
+	- Fix for algorithm parameters in openrc
+
 *zram-init-12.0:
+	Livia Medeiros (https://github.com/LiviaMedeiros):
+	- Fixes and improvements of default for algorithm parameters
+
 	Martin Väth <martin at mvath.de>:
 	- Support algorithm parameters (-A), see
 	  https://github.com/vaeth/zram-init/issues/43

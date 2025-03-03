@@ -81,6 +81,7 @@ start() {
 	if yesno "$load_on_start"
 	then	einfo 'Loading zram module...'
 		modprobe zram "num_devices=$num_devices"
+		sleep 1
 		eend $?
 	fi
 

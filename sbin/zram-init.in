@@ -360,20 +360,22 @@ fi
 $umount && exit $status
 test -b "$devnode" || HotAdd
 
-# algo_params is not (yet) supported by zramctl
-[ -z "$algo_params" ] || SysCtlN "$algo_params" "$block/algorithm_params"
 if $zramctl && [ -z "${backing_dev:++}" ]
 then	eval "set -- a $zramctl_opt"
 	shift
 	zramctl --size "${size}MiB" \
 		${streams:+--streams "$streams"} \
-		${algo:+--algorithm "$algo"} ${1+"$@"} \
+		${algo:+--algorithm "$algo"} \
+		${algo_params:+--algorithm_params "$algo_params"} \
+		${1+"$@"} \
 		-- "$devnode" || xFatal 'zramctl zram${dev} failed'
 else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
 		|| xWarning \
 		'failed to set zram${dev} max_comp_streams to ${streams}'
 	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
 		xWarning 'failed to set zram${dev} comp_algorithm to ${algo}'
+	[ -z "$algo_params" ] || SysCtl "$algo_params" "$block/algorithm_params" || \
+		xWarning 'failed to set zram${dev} algorithm_params to ${algo_params}'
 	[ -z "${backing_dev:++}" ] || \
 		SysCtlN "$backing_dev" "$block/backing_dev" || \
 		xWarning 'failed to set zram${dev} backing_dev'

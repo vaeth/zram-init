@@ -1,5 +1,10 @@
 # ChangeLog for zram-init:
 
+*zram-init-12.2:
+	Livia Medeiros (https://github.com/LiviaMedeiros):
+	- Support algorithm parameters w/ zramctl.
+	  This requires >=sys-apps/util-linux-2.41
+
 *zram-init-12.1:
 	Livia Medeiros (https://github.com/LiviaMedeiros):
 	- Fix for algorithm parameters in openrc

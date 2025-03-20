@@ -15,6 +15,7 @@ are provided.
 
 If `zramctl` (from __>=util-linux-2.26__) is available,
 this is used by default.
+(Setting algorithm parameters requires __>=util-linux-2.21__.)
 Currently, this is not a dependency: a manual method is provided as a fallback.
 The latter might be removed in a future release of this script.
 

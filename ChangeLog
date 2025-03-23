@@ -5,6 +5,9 @@
 	- Support algorithm parameters w/ zramctl.
 	  This requires >=sys-apps/util-linux-2.41
 
+	DevenBL (https://github.com/DevenBL):
+	- Add a sleep to work around a race
+
 *zram-init-12.1:
 	Livia Medeiros (https://github.com/LiviaMedeiros):
 	- Fix for algorithm parameters in openrc

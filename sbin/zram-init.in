@@ -366,7 +366,7 @@ then	eval "set -- a $zramctl_opt"
 	zramctl --size "${size}MiB" \
 		${streams:+--streams "$streams"} \
 		${algo:+--algorithm "$algo"} \
-		${algo_params:+--algorithm_params "$algo_params"} \
+		${algo_params:+--algorithm-params "$algo_params"} \
 		${1+"$@"} \
 		-- "$devnode" || xFatal 'zramctl zram${dev} failed'
 else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \

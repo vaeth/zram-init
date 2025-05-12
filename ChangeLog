@@ -1,5 +1,11 @@
 # ChangeLog for zram-init:
 
+*zram-init-13.0:
+	Martin Väth <martin at mvath.de>:
+	- Remove max_comp_streams
+	  https://github.com/vaeth/zram-init/issues/50#issuecomment-2857106112
+	- Update translations and reformat french translation
+
 *zram-init-12.2:
 	Livia Medeiros (https://github.com/LiviaMedeiros):
 	- Support algorithm parameters w/ zramctl.

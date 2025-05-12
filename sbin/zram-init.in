@@ -176,7 +176,6 @@ Call with LANG=C to disable translations'
 PATH=${PATH-}${PATH:+:}/usr/sbin:/sbin
 dev=
 num=
-streams=
 algo=
 algo_params=
 prio=
@@ -202,9 +201,8 @@ writeback=false
 writeback_limit=
 incompressible=false
 OPTIND=1
-while getopts 's:S:a:A:b:Ic:d:D:m:o:p:t:B:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
+while getopts 'S:a:A:b:Ic:d:D:m:o:p:t:B:i:N:L:U:wW:TlkK:M:2:Z:hH' opt
 do	case $opt in
-	s)	streams=$OPTARG;;
 	S)	mem_limit=$OPTARG;;
 	a)	algo=$OPTARG;;
 	A)	algo_params=$OPTARG;;
@@ -364,15 +362,11 @@ if $zramctl && [ -z "${backing_dev:++}" ]
 then	eval "set -- a $zramctl_opt"
 	shift
 	zramctl --size "${size}MiB" \
-		${streams:+--streams "$streams"} \
 		${algo:+--algorithm "$algo"} \
 		${algo_params:+--algorithm-params "$algo_params"} \
 		${1+"$@"} \
 		-- "$devnode" || xFatal 'zramctl zram${dev} failed'
-else	[ -z "$streams" ] || SysCtl "$streams" "$block/max_comp_streams" \
-		|| xWarning \
-		'failed to set zram${dev} max_comp_streams to ${streams}'
-	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
+else	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
 		xWarning 'failed to set zram${dev} comp_algorithm to ${algo}'
 	[ -z "$algo_params" ] || SysCtl "$algo_params" "$block/algorithm_params" || \
 		xWarning 'failed to set zram${dev} algorithm_params to ${algo_params}'

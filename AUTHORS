@@ -16,7 +16,8 @@ Kriss (https://github.com/Kr1ss-XD) (fix installing the localized manpages)
 Livia Medeiros (https://github.com/LiviaMedeiros)
 Jan Palus <atler at pid-linux.org> (avoid shell calculation)
 Zolran Puskas (https://github.com/zpuskas) (observe mlimit not in Mb)
-Mattéo Rossillol‑‑Laruelle <beatussum at protonmail.com> (https://github.com/beatussum) (XFS support, Makefile, i18n support, Makefile, French translation)
+Mattéo Rossillol-Laruelle <beatussum at protonmail.com> (https://github.com/beatussum) (XFS support, Makefile, i18n support, Makefile, French translation)
+Luca Santarelli (https://github.com/hrk)
 Edlund Scott <at sredlund>
 Sebastiaan (https://github.com/SharkWipf)
 Stuart <itoffshore at users.noreply.github.com>

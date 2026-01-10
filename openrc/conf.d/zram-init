@@ -56,11 +56,11 @@ num_devices=2
 #
 # Only variables with numbers  0 ... num_devices-1  are used by the script.
 
-# swap - 500M (or a fourth of available memory if uncommenting)
+# swap - defaults to 1/2 of total memory
 type0=swap
 flag0= # The default "16383" is fine for us
-size0=512
-#size0=`LC_ALL=C free -m | awk '/^Mem:/{print int($2/4)}'`
+size0=$(awk '/MemTotal/{print int($2/2/1024)}' /proc/meminfo)
+#size0=512  # fixed size in MB
 mlim0= # no hard memory limit
 back0= # no backup device
 icmp0= # no incompressible page writing to backup device

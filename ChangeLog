@@ -1,5 +1,9 @@
 # ChangeLog for zram-init:
 
+*zram-init-13.1:
+	Xiangzhe (https://github.com/xz-de):
+	- Fix order for openrc
+
 *zram-init-13.0:
 	Martin Väth <martin at mvath.de>:
 	- Remove max_comp_streams

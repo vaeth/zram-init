@@ -1,6 +1,17 @@
 # zram settings...
 # SPDX-License-Identifier: GPL-2.0-only
 
+# If you are mounting zram on /tmp or /var/tmp, keep the default setting.
+# This ensures zram is mounted before bootmisc creates files like /tmp/.X11-unix.
+# See https://github.com/vaeth/zram-init/issues/56 for more information.
+rc_before="bootmisc"
+#
+# If you are mounting zram inside a subdirectory listed in clean_tmp_dirs,
+# comment out rc_before above and use this instead
+# (see /etc/conf.d/bootmisc or
+# https://github.com/OpenRC/openrc/blob/master/init.d/bootmisc.in):
+#rc_after="bootmisc"
+
 # load zram kernel module on start?
 load_on_start=yes
 

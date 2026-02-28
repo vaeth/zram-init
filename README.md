@@ -37,7 +37,7 @@ should go into `/lib/modprobe.d` or `/etc/modprobe.d` and be modified
 appropriately.
 
 To use `LZ4` compression with zram your kernel needs to be compiled with
-a corresponding options. Depending on your kernel version this might be
+corresponding options. Depending on your kernel version this might be
 
 - `CONFIG_ZRAM_LZ4_COMPRESS=y` (for older kernels)
 - `CONFIG_CRYPTO_LZ4=y` (for recent kernels)

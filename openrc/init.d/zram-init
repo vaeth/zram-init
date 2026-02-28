@@ -3,9 +3,7 @@
 
 depend() {
 	need localmount swap
-	before bootmisc
 	after modules
-	use tmpfiles.setup
 }
 
 ZramInit() {

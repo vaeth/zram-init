@@ -1,5 +1,14 @@
 # ChangeLog for zram-init:
 
+*zram-init-13.2:
+	Martin Väth <martin at mvath.de>:
+	- Rework openrc order/dependencies once more: Drop from the
+	  init-script the dependencies which might need to change in some
+	  typical setups. Put them instead into the config file with default
+	  for the (conjectured) most likely setup. Also add a verbose comment
+	  describing why it is there now and when/why/how to change it.
+	  See the discussion in https://github.com/vaeth/zram-init/issues/56
+
 *zram-init-13.1:
 	Xiangzhe (https://github.com/xz-de):
 	- Fix order for openrc

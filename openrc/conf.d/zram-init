@@ -140,3 +140,19 @@ algo3=zstd
 labl3=zram_swap2
 uuid3=
 args3=
+
+# The init-file does not enforce any order or dependency on bootmisc or
+# tmpfiles.setup, but very likely at least some order should be configured
+# in the config file.
+# Note that bootmisc and tmpfiles.setup typically both create /tmp and other
+# temporary directories (if they do no not exist already) but also some
+# subdirectories in it.
+# Depending on whether zram-init should be used to mount directories on
+# mount-points which are typically permanent or volatile (that is, removed
+# and recreated at # every restart) you might want to put these services
+# into rc_before or rc_after (or possibly even stronger rc_use or rc_depend).
+# If both is used, it might be addiotionally necessary to write a separate
+# init-file which creates a needed mount point and to rc_depend on it here.
+#rc_after=""
+#rc_depend=""
+rc_before="bootmisc tmpfiles.setup"

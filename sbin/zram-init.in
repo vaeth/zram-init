@@ -382,11 +382,11 @@ else	[ -z "$algo" ] || SysCtl "$algo" "$block/comp_algorithm" || \
 		return
 	}
 	[ -n "${writeback_limit:++}" ] || return 0
-	SysctlN 1 "$block/writeback_limit_enable" || {
+	SysCtlN 1 "$block/writeback_limit_enable" || {
 		xWarning 'failed to enable writeback_limit for zram${dev}'
 		return
 	}
-	SysctlN "$writeback_limit" "$block/writeback_limit" || xWarning \
+	SysCtlN "$writeback_limit" "$block/writeback_limit" || xWarning \
 	'failed to set writeback_limit ${writeback_limit} for zram${dev}'
 }
 	! $writeback || InitWriteback

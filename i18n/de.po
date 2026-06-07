@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zram-init\n"
 "Report-Msgid-Bugs-To: Martin V\"ath <martin@mvath.de>\n"
-"POT-Creation-Date: 2021-03-18 19:36+0100\n"
-"PO-Revision-Date: 2025-05-12 07:27+0200\n"
+"POT-Creation-Date: 2026-06-07 08:22+0200\n"
+"PO-Revision-Date: 2026-06-07 08:27+0200\n"
 "Last-Translator: Martin V\"ath <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -209,7 +209,11 @@ msgstr "Fehler bei zramctl zram${dev}"
 
 #, sh-format
 msgid "failed to set zram${dev} comp_algorithm to ${algo}"
-msgstr "Fehler beim Setzen von comp_algorithm für  zram${dev} auf ${algo}"
+msgstr "Fehler beim Setzen von comp_algorithm für zram${dev} auf ${algo}"
+
+#, sh-format
+msgid "failed to set zram${dev} algorithm_params to ${algo_params}"
+msgstr "Fehler beim Setzen von algorithm_params für zram${dev} auf ${algo_params}"
 
 #, sh-format
 msgid "failed to set zram${dev} backing_dev"

@@ -132,7 +132,6 @@ An empty argument means the same as if the option is not specified.
 -D NUM     If modprobe needs to be used, require NUM devices. This is not
            recommended. Rely instead on /etc/modprobe.d/zram.conf with the line
            "options zram num_devices=NUM"
--s NUM     Use up to NUM parallel compression streams for the device
 -S MAX     Use maximally MAX megabytes of uncompressed memory for the device
 -b DEV     Use DEV as backing device
 -I         If combined with "-b DEV", store incompressible pages to

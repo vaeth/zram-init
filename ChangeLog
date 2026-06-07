@@ -1,5 +1,16 @@
 # ChangeLog for zram-init:
 
+*zram-init-13.3:
+	dsankouski (https://github.com/dsankouski):
+	- Fix typo in function call
+
+	soyflatwhit3 (https://github.com/soyflatwhit3):
+	- Remove -s from manpage
+
+	Martin Väth <martin at mvath.de>:
+	- Remove -s from help and zsh completions
+	- Update translations
+
 *zram-init-13.2:
 	Martin Väth <martin at mvath.de>:
 	- Rework openrc order/dependencies once more: Drop from the

@@ -4,6 +4,12 @@
 # load zram kernel module on start?
 load_on_start=yes
 
+# how long to sleep initially for the module to finish loading
+module_wait=0
+
+# how many times to retry initialising a device
+init_retry=10
+
 # unload zram kernel module on stop?
 unload_on_stop=yes
 

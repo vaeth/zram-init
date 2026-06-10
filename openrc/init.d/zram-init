@@ -24,7 +24,9 @@ ZramInit() {
 			${mode:+-m "$mode"} \
 			${1+"$@"} -- "$size" "$fstype"
 	fi
-	eend $?
+	rc=$?
+	eend $rc
+	return $rc
 }
 
 ZramStop() {
@@ -80,13 +82,22 @@ start() {
 	if yesno "$load_on_start"
 	then	einfo 'Loading zram module...'
 		modprobe zram "num_devices=$num_devices"
-		sleep 1
+		sleep "${module_wait:-0}"
 		eend $?
 	fi
 
 	i=0
 	while [ $i -lt "$num_devices" ]
-	do	ZramIgnore "$i" || ZramInit -d "$i"
+	do
+		if ! ZramIgnore "$i"; then
+			n="${init_retry:-10}"
+			while ! ZramInit -d "$i"; do
+				let --n
+				[ "$n" -gt "0" ] || break
+				einfo "Retrying in a second..."
+				sleep 1
+			done
+		fi
 		i=$(( $i + 1 ))
 	done
 	:

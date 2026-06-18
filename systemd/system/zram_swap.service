@@ -14,7 +14,7 @@ RemainAfterExit=true
 # zram_tmp.service and zram_var_tmp.service and that
 # num_devices in modprobe.d/zram.conf contains the maximal used number + 1
 
-ExecStart=/bin/sh -c "exec /sbin/zram-init -azstd -Lzram_swap `LC_ALL=C free -m | awk '/^Mem:/{print int($2/2)}'`"
+ExecStart=/bin/sh -c "exec /sbin/zram-init -azstd -Lzram_swap `awk '/^MemTotal:/{print int($2/2048)}' /proc/meminfo`"
 ExecStop=/sbin/zram-init 0
 
 [Install]

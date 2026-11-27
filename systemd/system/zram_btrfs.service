@@ -4,6 +4,8 @@ Description=Create btrfs on zram /dev/zram1 without mounting it
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target
+Wants=systemd-udevd.service
+After=systemd-udevd.service systemd-udev-trigger.service
 
 [Service]
 Type=oneshot

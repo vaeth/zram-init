@@ -3,6 +3,8 @@
 Description=swap with zram
 DefaultDependencies=no
 Before=swap.target
+Wants=systemd-udevd.service
+After=systemd-udevd.service systemd-udev-trigger.service
 
 [Service]
 Type=oneshot

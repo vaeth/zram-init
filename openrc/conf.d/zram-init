@@ -151,8 +151,8 @@ args3=
 # mount-points which are typically permanent or volatile (that is, removed
 # and recreated at # every restart) you might want to put these services
 # into rc_before or rc_after (or possibly even stronger rc_use or rc_depend).
-# If both is used, it might be addiotionally necessary to write a separate
+# If both is used, it might be additionally necessary to write a separate
 # init-file which creates a needed mount point and to rc_depend on it here.
 #rc_after=""
-#rc_depend=""
+rc_depend="udev udev-trigger"
 rc_before="bootmisc tmpfiles.setup"

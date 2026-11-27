@@ -1,5 +1,10 @@
 # ChangeLog for zram-init:
 
+*zram-init-13.4:
+	Martin Väth <martin at mvath.de>:
+	- Depend on udev; thanks to Erich Seifert https://github.com/eseifert
+	  https://github.com/vaeth/zram-init/issues/67
+
 *zram-init-13.3:
 	dsankouski (https://github.com/dsankouski):
 	- Fix typo in function call
@@ -27,7 +32,7 @@
 *zram-init-13.0:
 	Martin Väth <martin at mvath.de>:
 	- Remove max_comp_streams
-	  https://github.com/vaeth/zram-init/issues/50#issuecomment-2857106112
+	  https://github.com/vaeth/zram-init/issues/50
 	- Update translations and reformat french translation
 
 *zram-init-12.2:
